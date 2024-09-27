@@ -1,0 +1,14 @@
+rajouter le goal et hints dans le MOTD à la connexion user
+
+
+Vider contenu
+/etc/motd
+
+chmod -x aux fichiers
+/etc/update-motd.d/
+
+dans /etc/pam.d/ssh
+ligne avec pam_mail :
+session	optional	pam_mail.so standard noenv
+
+remplacer standard par nopen
