@@ -48,6 +48,7 @@ mv /etc/motd /etc/motd.bak
 echo "=====================================================
 Welcome on bandit's wargame at home !
 =====================================================">/etc/motd
+mkdir /etc/bandit_scripts
 mkdir /etc/bandit_pass
 mkdir /etc/bandit_goal
 passwords=()
@@ -66,6 +67,16 @@ goals+=( 'The password for the next level is stored in the file data.txt in one 
 goals+=( 'The password for the next level is stored in the file data.txt, which contains base64 encoded data' )
 goals+=( 'The password for the next level is stored in the file data.txt, where all lowercase (a-z) and uppercase (A-Z) letters have been rotated by 13 positions' )
 goals+=( 'The password for the next level is stored in the file data.txt, which is a hexdump of a file that has been repeatedly compressed. For this level it may be useful to create a directory under /tmp in which you can work. Use mkdir with a hard to guess directory name. Or better, use the command “mktemp -d”. Then copy the datafile using cp, and rename it using mv (read the manpages!)' )
+goals+=( 'The password for the next level is stored in /etc/bandit_pass/bandit14 and can only be read by user bandit14. For this level, you don’t get the next password, but you get a private SSH key that can be used to log into the next level. Note: localhost is a hostname that refers to the machine you are working on' )
+goals+=( 'The password for the next level can be retrieved by submitting the password of the current level to port 30000 on localhost.' )
+goals+=( 'The password for the next level can be retrieved by submitting the password of the current level to port 30001 on localhost using SSL/TLS encryption. Helpful note: Getting “DONE”, “RENEGOTIATING” or “KEYUPDATE”? Read the “CONNECTED COMMANDS” section in the manpage.' )
+goals+=( 'The credentials for the next level can be retrieved by submitting the password of the current level to a port on localhost in the range 31000 to 32000. First find out which of these ports have a server listening on them. Then find out which of those speak SSL/TLS and which don’t. There is only 1 server that will give the next credentials, the others will simply send back to you whatever you send to it. Helpful note: Getting “DONE”, “RENEGOTIATING” or “KEYUPDATE”? Read the “CONNECTED COMMANDS” section in the manpage.' )
+goals+=( )
+goals+=( )
+goals+=( )
+goals+=( )
+goals+=( )
+
 
 
 echo -n "Creating users... "
@@ -212,7 +223,7 @@ rm /home/bandit8/data_tmp.txt
 #level9 -> level10
 echo -ne "\r9"
 data='`cat data9.txt`'
-echo data | base64 -d | tr FGUW5ilLVJrxX9kMYMmlN4MgbpfMiqey ${passwords[10]} | base64> /home/bandit9/data.txt
+echo data | base64 -d | tr FGUW5ilLVJrxX9kMYMmlN4MgbpfMiqey ${passwords[10]} > /home/bandit9/data.txt
 
 
 
@@ -223,12 +234,55 @@ echo ${passwords[11]} | base64 > /home/bandit10/data.txt
 
 
 #level11 -> level12
-echo -ne "11"
+echo -ne "\r11"
 echo ${passwords[12]} | tr 'a-mn-z' 'n-za-m' | tr 'A-MN-Z' 'N-ZA-M' > /home/bandit11/data.txt
 
 
-
 #level12 -> level13
+echo -ne "\r12"
+tmp=$(mktemp -d)
+echo ${passwords[13]} > "$tmp/data8"
+gzip -c "$tmp/data8" > "$tmp/data8.bin"
+tar cvf "$tmp/data7.tar" "$tmp/data8.bin"
+bzip2 -c "$tmp/data7.tar" > "$tmp/data6.bin"
+tar cvf "$tmp/data5.bin" "$tmp/data6.bin"
+tar cvf "$tmp/data4.bin" "$tmp/data5.bin"
+gzip -c "$tmp/data4.bin" > "$tmp/data3.bin"
+bzip2 -c "$tmp/data3.bin" > "$tmp/data2.bin"
+gzip -c "$tmp/data2.bin" > "$tmp/data1.bin"
+xxd "$tmp/data1.bin" > data.txt
+
+#level13 -> level14
+echo -ne "\r13"
+ssh-keygen -f ./sshkey.private -N ""
+mkdir /home/bandit13/.ssh/
+mv ./sshkey.private /home/bandit13/
+mv ./sshkey.private.pub /home/bandit13/authorized_keys
+
+
+#level14 -> level15
+echo -ne "\r14"
+cp script14.py /etc/bandit_scripts/script14.py
+
+crontab -u root -l > mycron
+echo "@reboot sleep 30 && python /etc/bandit_scripts/script14.py" >> mycron
+crontab mycron && rm mycron
+
+
+#level15 -> level16
+echo -ne "\r15"
+cp script15.py /etc/bandit_scripts/script15.py
+
+crontab -u root -l > mycron
+echo "@reboot sleep 30 && python /etc/bandit_scripts/script15.py" >> mycron
+crontab mycron && rm mycron
+openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout "/etc/bandit_scripts/script15.key" -out "/etc/bandit_scripts/script15.pem" -subj "/"
+
+
+
+
+
+
 
 echo;
-echo "All done, enjoy !"
+echo "All done, reboot and enjoy !"
