@@ -1,0 +1,10 @@
+Clone or zip download this repository
+
+sudo ./install.sh
+
+That's all
+
+
+
+Pre-requisites :
+I assume xxd is installed

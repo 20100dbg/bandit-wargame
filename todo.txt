@@ -1,6 +1,9 @@
-rajouter le goal et hints dans le MOTD à la connexion user
+alias à corriger
+
+check des levels : level 11 ok
 
 
+#########################
 Vider contenu
 /etc/motd
 
@@ -12,3 +15,5 @@ ligne avec pam_mail :
 session	optional	pam_mail.so standard noenv
 
 remplacer standard par nopen
+
+
