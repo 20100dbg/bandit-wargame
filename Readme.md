@@ -1,3 +1,5 @@
+### Install instructions
+
 We may need to install xxd
 ```
 sudo apt install xxd
@@ -17,3 +19,10 @@ sudo ./install.sh
 You'll need to reboot to activate startup scripts
 
 Enjoy !
+
+
+
+
+
+### Todo
+Level checked : 20
