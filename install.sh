@@ -19,8 +19,9 @@ create_user() {
 	
 	mkdir "/home/$1/.ssh"
 	echo "$pass" > "/etc/bandit_pass/$1"
+	chown "$1" "/etc/bandit_pass/$1"
 	chgrp "$1" "/etc/bandit_pass/$1"
-	chmod 440 "/etc/bandit_pass/$1"
+	chmod 400 "/etc/bandit_pass/$1"
 	echo $pass
 }
 
@@ -46,23 +47,13 @@ create_motd() {
 	chgrp "bandit$1" "/etc/bandit_goal/bandit$1"
 	chmod 440 "/etc/bandit_goal/bandit$1"
 
-	echo "alias goal='cat /etc/bandit_goal/bandit$1'" > "/home/bandit$1/.ssh/rc"
+	echo "alias goal='cat /etc/bandit_goal/bandit$1'" > "/home/bandit$1/.profile"
 
-	echo "echo 'Level $1'" >> "/home/bandit$1/.ssh/rc"
-	echo "echo 'Your goal is :'" >> "/home/bandit$1/.ssh/rc"
-	echo "cat /etc/bandit_goal/bandit$1" >> "/home/bandit$1/.ssh/rc"
+	echo "echo 'Level $1'" >> "/home/bandit$1/.profile"
+	echo "echo 'Your goal is :'" >> "/home/bandit$1/.profile"
+	echo "cat /etc/bandit_goal/bandit$1" >> "/home/bandit$1/.profile"
 
 }
-
-
-mv /etc/motd /etc/motd.bak
-cat motd.txt >/etc/motd
-mkdir /etc/bandit_scripts
-mkdir /etc/bandit_pass
-mkdir /etc/bandit_goal
-mkdir /etc/bandit_skel
-
-passwords=()
 
 goals=()
 goals+=( "The password for the next level is stored in a file called readme located in the home directory. Use this password to log into bandit1 using SSH. Whenever you find a password for a level, use SSH (on port 2220) to log into that level and continue the game." )
@@ -75,6 +66,7 @@ goals+=( "The password for the next level is stored somewhere on the server and 
 goals+=( "The password for the next level is stored in the file data.txt next to the word millionth" )
 goals+=( "The password for the next level is stored in the file data.txt and is the only line of text that occurs only once" )
 goals+=( "The password for the next level is stored in the file data.txt in one of the few human-readable strings, preceded by several '=' characters." )
+#level 10
 goals+=( "The password for the next level is stored in the file data.txt, which contains base64 encoded data" )
 goals+=( "The password for the next level is stored in the file data.txt, where all lowercase (a-z) and uppercase (A-Z) letters have been rotated by 13 positions" )
 goals+=( "The password for the next level is stored in the file data.txt, which is a hexdump of a file that has been repeatedly compressed. For this level it may be useful to create a directory under /tmp in which you can work. Use mkdir with a hard to guess directory name. Or better, use the command 'mktemp -d'. Then copy the datafile using cp, and rename it using mv (read the manpages!)" )
@@ -82,8 +74,29 @@ goals+=( "The password for the next level is stored in /etc/bandit_pass/bandit14
 goals+=( "The password for the next level can be retrieved by submitting the password of the current level to port 30000 on localhost." )
 goals+=( "The password for the next level can be retrieved by submitting the password of the current level to port 30001 on localhost using SSL/TLS encryption. Helpful note: Getting 'DONE', 'RENEGOTIATING' or 'KEYUPDATE'? Read the 'CONNECTED COMMANDS' section in the manpage." )
 goals+=( "The credentials for the next level can be retrieved by submitting the password of the current level to a port on localhost in the range 31000 to 32000. First find out which of these ports have a server listening on them. Then find out which of those speak SSL/TLS and which don't. There is only 1 server that will give the next credentials, the others will simply send back to you whatever you send to it. Helpful note: Getting 'DONE', 'RENEGOTIATING' or 'KEYUPDATE'? Read the 'CONNECTED COMMANDS' section in the manpage." )
-goals+=( )
+goals+=( "There are 2 files in the homedirectory: passwords.old and passwords.new. The password for the next level is in passwords.new and is the only line that has been changed between passwords.old and passwords.new\n\nNOTE: if you have solved this level and see ‘Byebye!’ when trying to log into bandit18, this is related to the next level, bandit19" )
+goals+=( "The password for the next level is stored in a file readme in the homedirectory. Unfortunately, someone has modified .bashrc to log you out when you log in with SSH." )
+goals+=( "To gain access to the next level, you should use the setuid binary in the homedirectory. Execute it without arguments to find out how to use it. The password for this level can be found in the usual place (/etc/bandit_pass), after you have used the setuid binary." )
+#level 20
+goals+=( "There is a setuid binary in the homedirectory that does the following: it makes a connection to localhost on the port you specify as a commandline argument. It then reads a line of text from the connection and compares it to the password in the previous level (bandit20). If the password is correct, it will transmit the password for the next level (bandit21).\n\nNOTE: Try connecting to your own network daemon to see if it works as you think" )
+goals+=( "A program is running automatically at regular intervals from cron, the time-based job scheduler. Look in /etc/cron.d/ for the configuration and see what command is being executed." )
+goals+=( "A program is running automatically at regular intervals from cron, the time-based job scheduler. Look in /etc/cron.d/ for the configuration and see what command is being executed.\n\nNOTE: Looking at shell scripts written by other people is a very useful skill. The script for this level is intentionally made easy to read. If you are having problems understanding what it does, try executing it to see the debug information it prints." )
 
+
+mv /etc/motd /etc/motd.bak
+cat motd.txt >/etc/motd
+
+mkdir /etc/bandit_scripts
+mkdir /etc/bandit_pass
+mkdir /etc/bandit_goal
+mkdir /etc/bandit_skel
+
+
+current_path=$(pwd)
+tmp_path=$(mktemp -d)
+cd $tmp_path
+
+passwords=()
 
 
 echo -n "Creating users... "
@@ -182,7 +195,7 @@ done
 rnd_dir=`seq -w 0 19 | shuf | head -n 1`
 rnd_file=`seq -w 0 9 | shuf | head -n 1`
 
-spaces=`python -c "print(' ' * 982)"`
+spaces=`python -c "print(' ' * 984)"`
 echo "The password is ${passwords[6]}$spaces" > "/home/bandit5/inhere/maybehere$rnd_dir/file$rnd_file"
 chmod 640 "/home/bandit5/inhere/maybehere$rnd_dir/file$rnd_file"
 
@@ -209,9 +222,9 @@ while IFS= read -r line; do
 	then
 		echo -e "millionth\t${passwords[8]}" >> /home/bandit7/data.txt
 	else
-		echo -e "$line\t`cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1`" >> /home/bandit7/data.txt
+		echo -e "$line\t$(gen_passwd)" >> /home/bandit7/data.txt
 	fi
-done < data/data7.txt
+done < "$current_path/data/data7.txt"
 echo "done"
 
 
@@ -222,7 +235,7 @@ x=$(( RANDOM % 1000))
 
 for i in {1..100}; do
 	
-	rnd_string=`cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1`
+	rnd_string=$(gen_passwd)
 
 	for j in {1..10}; do
 		echo $rnd_string >> /home/bandit8/data_tmp.txt
@@ -259,17 +272,17 @@ echo "done"
 
 #level12 -> level13
 echo -n "Creating level 12... "
-tmp=$(mktemp -d)
-echo ${passwords[13]} > "$tmp/data8"
-gzip -c "$tmp/data8" > "$tmp/data8.bin"
-tar cvf "$tmp/data7.tar" --absolute-names "$tmp/data8.bin" 1>/dev/null 2>/dev/null
-bzip2 -c "$tmp/data7.tar" > "$tmp/data6.bin"
-tar cvf "$tmp/data5.bin" --absolute-names "$tmp/data6.bin" 1>/dev/null 2>/dev/null
-tar cvf "$tmp/data4.bin" --absolute-names "$tmp/data5.bin" 1>/dev/null 2>/dev/null
-gzip -c "$tmp/data4.bin" > "$tmp/data3.bin"
-bzip2 -c "$tmp/data3.bin" > "$tmp/data2.bin"
-gzip -c "$tmp/data2.bin" > "$tmp/data1.bin"
-xxd "$tmp/data1.bin" > /home/bandit12/data.txt
+echo ${passwords[13]} > "data8"
+gzip -c "data8" > "data8.bin"
+tar cvf "data7.tar" --absolute-names "data8.bin" 1>/dev/null 2>/dev/null
+bzip2 -c "data7.tar" > "data6.bin"
+tar cvf "data5.bin" --absolute-names "data6.bin" 1>/dev/null 2>/dev/null
+tar cvf "data4.bin" --absolute-names "data5.bin" 1>/dev/null 2>/dev/null
+gzip -c "data4.bin" > "data3.bin"
+bzip2 -c "data3.bin" > "data2.bin"
+gzip -c "data2.bin" > "data1.bin"
+xxd "data1.bin" > /home/bandit12/data.txt
+rm data*
 echo "done"
 
 
@@ -277,13 +290,14 @@ echo "done"
 echo -n "Creating level 13... "
 ssh-keygen -q -f ./sshkey.private -N "" 1>/dev/null 2>/dev/null
 mv ./sshkey.private /home/bandit13/
-mv ./sshkey.private.pub /home/bandit13/.ssh/authorized_keys
+set_perms 13 "/home/bandit13/sshkey.private"
+mv ./sshkey.private.pub /home/bandit14/.ssh/authorized_keys
 echo "done"
 
 
 #level14 -> level15
 echo -n "Creating level 14... "
-cp scripts/script14.py /etc/bandit_scripts/script14.py
+cp "$current_path/scripts/script14.py" /etc/bandit_scripts/script14.py
 
 crontab -u root -l > mycron 2>/dev/null
 echo "@reboot sleep 30 && python /etc/bandit_scripts/script14.py" >> mycron
@@ -293,13 +307,72 @@ echo "done"
 
 #level15 -> level16
 echo -n "Creating level 15... "
-cp scripts/script15.py /etc/bandit_scripts/script15.py
+cp "$current_path/scripts/script15.py" /etc/bandit_scripts/script15.py
 
 crontab -u root -l > mycron
 echo "@reboot sleep 30 && python /etc/bandit_scripts/script15.py" >> mycron
 crontab mycron && rm mycron
 openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout "/etc/bandit_scripts/script15.key" -out "/etc/bandit_scripts/script15.pem" -subj "/" 1>/dev/null 2>/dev/null
 echo "done"
+
+
+#level16 -> level17
+echo -n "Creating level 16... "
+
+ssh-keygen -q -f ./sshkey17.private -N "" 1>/dev/null 2>/dev/null
+mv ./sshkey17.private /etc/bandit_scripts/sshkey17.private
+mv ./sshkey17.private.pub /home/bandit17/.ssh/authorized_keys
+
+cp "$current_path/scripts/script16.py" /etc/bandit_scripts/script16.py
+
+crontab -u root -l > mycron
+echo "@reboot sleep 30 && python /etc/bandit_scripts/script16.py" >> mycron
+crontab mycron && rm mycron
+openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout "/etc/bandit_scripts/script16.key" -out "/etc/bandit_scripts/script16.pem" -subj "/" 1>/dev/null 2>/dev/null
+echo "done"
+
+
+#level17 -> level18
+echo -n "Creating level 17... "
+
+touch "/home/bandit17/passwords.old"
+set_perms 17 "/home/bandit17/passwords.old"
+
+for i in {1..100}; do
+	gen_passwd >> "/home/bandit17/passwords.old"
+done
+
+rnd_line=$(sed -n -e $((RANDOM % 100))p /home/bandit17/passwords.old)
+sed "s/$rnd_line/${passwords[18]}/" "/home/bandit17/passwords.old" > "/home/bandit17/passwords.new"
+echo "done"
+
+
+#level18 -> level19
+echo -n "Creating level 18... "
+echo ${passwords[19]} > "/home/bandit18/readme"
+echo 'exit 0' >> "/home/bandit18/.profile"
+echo "done"
+
+
+#level19 -> level20
+echo -n "Creating level 19... "
+gcc "$current_path/scripts/script19.c" -o "/home/bandit19/bandit20-do"
+
+chown bandit20 "/home/bandit19/bandit20-do"
+chgrp bandit19 "/home/bandit19/bandit20-do"
+chmod 4750 "/home/bandit19/bandit20-do"
+echo "done"
+
+
+#level20 -> level21
+echo -n "Creating level 20... "
+gcc "$current_path/scripts/script20.c" -o "/home/bandit20/suconnect"
+
+chown bandit21 "/home/bandit20/suconnect"
+chgrp bandit20 "/home/bandit20/suconnect"
+chmod 4750 "/home/bandit20/suconnect"
+echo "done"
+
 
 
 

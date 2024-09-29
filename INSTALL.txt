@@ -1,10 +1,19 @@
+We may need to install xxd
+```
+sudo apt install xxd
+```
+
 Clone or zip download this repository
+```
+git clone https://github.com/20100dbg/bandit-wargame
+```
 
+
+Start installer as root
+```
 sudo ./install.sh
+```
 
-That's all
+You'll need to reboot to activate startup scripts
 
-
-
-Pre-requisites :
-I assume xxd is installed
+Enjoy !
