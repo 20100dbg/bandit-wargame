@@ -309,20 +309,14 @@ echo "done"
 #level14 -> level15
 echo -n "Creating level 14... "
 cp "$current_path/scripts/script14.py" /etc/bandit_scripts/script14.py
-
-crontab -u root -l > mycron 2>/dev/null
-echo "@reboot sleep 30 && python /etc/bandit_scripts/script14.py" >> mycron
-crontab mycron && rm mycron
+echo "@reboot root python /etc/bandit_scripts/script14.py &> /dev/null" > /etc/cron.d/cronjob_bandit14
 echo "done"
 
 
 #level15 -> level16
 echo -n "Creating level 15... "
 cp "$current_path/scripts/script15.py" /etc/bandit_scripts/script15.py
-
-crontab -u root -l > mycron
-echo "@reboot sleep 30 && python /etc/bandit_scripts/script15.py" >> mycron
-crontab mycron && rm mycron
+echo "@reboot root python /etc/bandit_scripts/script15.py &> /dev/null" > /etc/cron.d/cronjob_bandit15
 openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout "/etc/bandit_scripts/script15.key" -out "/etc/bandit_scripts/script15.pem" -subj "/" 1>/dev/null 2>/dev/null
 echo "done"
 
@@ -335,10 +329,8 @@ mv ./sshkey17.private /etc/bandit_scripts/sshkey17.private
 mv ./sshkey17.private.pub /home/bandit17/.ssh/authorized_keys
 
 cp "$current_path/scripts/script16.py" /etc/bandit_scripts/script16.py
+echo "@reboot root python /etc/bandit_scripts/script16.py &> /dev/null" > /etc/cron.d/cronjob_bandit16
 
-crontab -u root -l > mycron
-echo "@reboot sleep 30 && python /etc/bandit_scripts/script16.py" >> mycron
-crontab mycron && rm mycron
 openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout "/etc/bandit_scripts/script16.key" -out "/etc/bandit_scripts/script16.pem" -subj "/" 1>/dev/null 2>/dev/null
 echo "done"
 
@@ -390,10 +382,13 @@ echo -n "Creating level 21... "
 echo "@reboot bandit22 /usr/bin/cronjob_bandit22.sh &> /dev/null" > /etc/cron.d/cronjob_bandit22
 echo "* * * * * bandit22 /usr/bin/cronjob_bandit22.sh &> /dev/null" >> /etc/cron.d/cronjob_bandit22
 
-cp "$current_path/scripts/script22.sh" "/usr/bin/cronjob_bandit22.sh"
+sed "s/__PLACEHOLDER__/$(gen_passwd)/" "$current_path/scripts/script22.sh" > "/usr/bin/cronjob_bandit22.sh"
+
+
 chown bandit22 "/usr/bin/cronjob_bandit22.sh"
 chgrp bandit21 "/usr/bin/cronjob_bandit22.sh"
 chmod 750 "/usr/bin/cronjob_bandit22.sh"
+echo "done"
 
 
 #level22 -> level23
@@ -405,17 +400,23 @@ cp "$current_path/scripts/script23.sh" "/usr/bin/cronjob_bandit23.sh"
 chown bandit23 "/usr/bin/cronjob_bandit23.sh"
 chgrp bandit22 "/usr/bin/cronjob_bandit23.sh"
 chmod 750 "/usr/bin/cronjob_bandit23.sh"
+echo "done"
 
 
 #level23 -> level24
 echo -n "Creating level 23... "
+
 echo "@reboot bandit24 /usr/bin/cronjob_bandit24.sh &> /dev/null" > /etc/cron.d/cronjob_bandit24
 echo "* * * * * bandit24 /usr/bin/cronjob_bandit24.sh &> /dev/null" >> /etc/cron.d/cronjob_bandit24
+
+mkdir -p "/var/spool/bandit24/foo"
+chmod 777 "/var/spool/bandit24/foo"
 
 cp "$current_path/scripts/script24.sh" "/usr/bin/cronjob_bandit24.sh"
 chown bandit24 "/usr/bin/cronjob_bandit24.sh"
 chgrp bandit23 "/usr/bin/cronjob_bandit24.sh"
 chmod 750 "/usr/bin/cronjob_bandit24.sh"
+echo "done"
 
 
 #level24 -> level25
@@ -424,9 +425,8 @@ echo -n "Creating level 24... "
 echo $((RANDOM%10000)) > /etc/bandit_pass/bandit25pin
 
 cp "$current_path/scripts/script25.py" /etc/bandit_scripts/script25.py
-crontab -u root -l > mycron 2>/dev/null
-echo "@reboot sleep 30 && python /etc/bandit_scripts/script25.py" >> mycron
-crontab mycron && rm mycron
+echo "@reboot root python /etc/bandit_scripts/script25.py &> /dev/null" > /etc/cron.d/cronjob_bandit25
+
 echo "done"
 
 
@@ -443,6 +443,9 @@ echo '#!/bin/sh' >> /usr/bin/showtext
 echo 'export TERM=linux' >> /usr/bin/showtext
 echo 'exec more /etc/motd' >> /usr/bin/showtext
 echo 'exit 0' >> /usr/bin/showtext
+
+chmod +x "/usr/bin/showtext"
+
 
 usermod -s /usr/bin/showtext bandit26
 echo "done"
