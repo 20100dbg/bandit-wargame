@@ -26,3 +26,5 @@ Enjoy !
 
 ### Todo
 Level checked : 20
+
+level 16b : hide another flag

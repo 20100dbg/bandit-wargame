@@ -28,7 +28,7 @@ char *concatenate(size_t size, char *array[size]){
 int main (int argc, char **argv)
 {
     if (argc == 1) {
-        printf("Run a command as another user.\n   Example: ./bandit20-do id\n", argv[0]);
+        printf("Run a command as another user.\n   Example: %s id\n", argv[0]);
     }
 
     setreuid(geteuid(), getuid());

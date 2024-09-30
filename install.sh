@@ -81,6 +81,17 @@ goals+=( "To gain access to the next level, you should use the setuid binary in 
 goals+=( "There is a setuid binary in the homedirectory that does the following: it makes a connection to localhost on the port you specify as a commandline argument. It then reads a line of text from the connection and compares it to the password in the previous level (bandit20). If the password is correct, it will transmit the password for the next level (bandit21).\n\nNOTE: Try connecting to your own network daemon to see if it works as you think" )
 goals+=( "A program is running automatically at regular intervals from cron, the time-based job scheduler. Look in /etc/cron.d/ for the configuration and see what command is being executed." )
 goals+=( "A program is running automatically at regular intervals from cron, the time-based job scheduler. Look in /etc/cron.d/ for the configuration and see what command is being executed.\n\nNOTE: Looking at shell scripts written by other people is a very useful skill. The script for this level is intentionally made easy to read. If you are having problems understanding what it does, try executing it to see the debug information it prints." )
+goals+=( "A program is running automatically at regular intervals from cron, the time-based job scheduler. Look in /etc/cron.d/ for the configuration and see what command is being executed.\n\nNOTE: This level requires you to create your own first shell-script. This is a very big step and you should be proud of yourself when you beat this level!\n\nNOTE 2: Keep in mind that your shell script is removed once executed, so you may want to keep a copy around…" )
+goals+=( "A daemon is listening on port 30002 and will give you the password for bandit25 if given the password for bandit24 and a secret numeric 4-digit pincode. There is no way to retrieve the pincode except by going through all of the 10000 combinations, called brute-forcing.\nYou do not need to create new connections each time" )
+goals+=( "Logging in to bandit26 from bandit25 should be fairly easy… The shell for user bandit26 is not /bin/bash, but something else. Find out what it is, how it works and how to break out of it.\n\nNOTE: if you’re a Windows user and typically use Powershell to ssh into bandit: Powershell is known to cause issues with the intended solution to this level. You should use command prompt instead." )
+goals+=( "Good job getting a shell! Now hurry and grab the password for bandit27!" )
+goals+=( "There is a git repository at ssh://bandit27-git@localhost/home/bandit27-git/repo via the port 2220. The password for the user bandit27-git is the same as for the user bandit27.\n\nClone the repository and find the password for the next level." )
+goals+=( "There is a git repository at ssh://bandit28-git@localhost/home/bandit28-git/repo via the port 2220. The password for the user bandit28-git is the same as for the user bandit28.\n\nClone the repository and find the password for the next level." )
+goals+=( "There is a git repository at ssh://bandit29-git@localhost/home/bandit29-git/repo via the port 2220. The password for the user bandit29-git is the same as for the user bandit29.\n\nClone the repository and find the password for the next level." )
+#level 30
+goals+=( "There is a git repository at ssh://bandit30-git@localhost/home/bandit30-git/repo via the port 2220. The password for the user bandit30-git is the same as for the user bandit30.\n\nClone the repository and find the password for the next level." )
+goals+=( "There is a git repository at ssh://bandit31-git@localhost/home/bandit31-git/repo via the port 2220. The password for the user bandit31-git is the same as for the user bandit31.\n\nClone the repository and find the password for the next level." )
+goals+=( "After all this git stuff, it’s time for another escape. Good luck!" )
 
 
 mv /etc/motd /etc/motd.bak
@@ -371,6 +382,80 @@ gcc "$current_path/scripts/script20.c" -o "/home/bandit20/suconnect"
 chown bandit21 "/home/bandit20/suconnect"
 chgrp bandit20 "/home/bandit20/suconnect"
 chmod 4750 "/home/bandit20/suconnect"
+echo "done"
+
+
+#level21 -> level22
+echo -n "Creating level 21... "
+echo "@reboot bandit22 /usr/bin/cronjob_bandit22.sh &> /dev/null" > /etc/cron.d/cronjob_bandit22
+echo "* * * * * bandit22 /usr/bin/cronjob_bandit22.sh &> /dev/null" >> /etc/cron.d/cronjob_bandit22
+
+cp "$current_path/scripts/script22.sh" "/usr/bin/cronjob_bandit22.sh"
+chown bandit22 "/usr/bin/cronjob_bandit22.sh"
+chgrp bandit21 "/usr/bin/cronjob_bandit22.sh"
+chmod 750 "/usr/bin/cronjob_bandit22.sh"
+
+
+#level22 -> level23
+echo -n "Creating level 22... "
+echo "@reboot bandit23 /usr/bin/cronjob_bandit23.sh &> /dev/null" > /etc/cron.d/cronjob_bandit23
+echo "* * * * * bandit23 /usr/bin/cronjob_bandit23.sh &> /dev/null" >> /etc/cron.d/cronjob_bandit23
+
+cp "$current_path/scripts/script23.sh" "/usr/bin/cronjob_bandit23.sh"
+chown bandit23 "/usr/bin/cronjob_bandit23.sh"
+chgrp bandit22 "/usr/bin/cronjob_bandit23.sh"
+chmod 750 "/usr/bin/cronjob_bandit23.sh"
+
+
+#level23 -> level24
+echo -n "Creating level 23... "
+echo "@reboot bandit24 /usr/bin/cronjob_bandit24.sh &> /dev/null" > /etc/cron.d/cronjob_bandit24
+echo "* * * * * bandit24 /usr/bin/cronjob_bandit24.sh &> /dev/null" >> /etc/cron.d/cronjob_bandit24
+
+cp "$current_path/scripts/script24.sh" "/usr/bin/cronjob_bandit24.sh"
+chown bandit24 "/usr/bin/cronjob_bandit24.sh"
+chgrp bandit23 "/usr/bin/cronjob_bandit24.sh"
+chmod 750 "/usr/bin/cronjob_bandit24.sh"
+
+
+#level24 -> level25
+echo -n "Creating level 24... "
+
+echo $((RANDOM%10000)) > /etc/bandit_pass/bandit25pin
+
+cp "$current_path/scripts/script25.py" /etc/bandit_scripts/script25.py
+crontab -u root -l > mycron 2>/dev/null
+echo "@reboot sleep 30 && python /etc/bandit_scripts/script25.py" >> mycron
+crontab mycron && rm mycron
+echo "done"
+
+
+#level25 -> level26
+echo -n "Creating level 25... "
+
+ssh-keygen -q -f ./bandit26.sshkey -N "" 1>/dev/null 2>/dev/null
+mv ./bandit26.sshkey /home/bandit25/
+set_perms 25 "/home/bandit25/bandit26.sshkey"
+mv ./bandit26.sshkey.pub /home/bandit26/.ssh/authorized_keys
+
+touch /usr/bin/showtext
+echo '#!/bin/sh' >> /usr/bin/showtext
+echo 'export TERM=linux' >> /usr/bin/showtext
+echo 'exec more /etc/motd' >> /usr/bin/showtext
+echo 'exit 0' >> /usr/bin/showtext
+
+usermod -s /usr/bin/showtext bandit26
+echo "done"
+
+
+#level26 -> level27
+echo -n "Creating level 26... "
+gcc "$current_path/scripts/script19.c" -o "/home/bandit26/bandit27-do"
+
+chown bandit27 "/home/bandit26/bandit27-do"
+chgrp bandit26 "/home/bandit26/bandit27-do"
+chmod 4750 "/home/bandit26/bandit27-do"
+
 echo "done"
 
 
