@@ -30,10 +30,8 @@ create_user() {
 set_perms() {
 	# $1 = current user id
 	# $2 = file to set perms
-	x=$(($1+1))
-
 	chown bandit$x "$2"
-	chgrp bandit$1 "$2"
+	chgrp bandit$(($1+1)) "$2"
 	chmod 640 "$2"
 }
 
@@ -86,7 +84,7 @@ goals+=( "A daemon is listening on port 30002 and will give you the password for
 goals+=( "Logging in to bandit26 from bandit25 should be fairly easy… The shell for user bandit26 is not /bin/bash, but something else. Find out what it is, how it works and how to break out of it.\n\nNOTE: if you’re a Windows user and typically use Powershell to ssh into bandit: Powershell is known to cause issues with the intended solution to this level. You should use command prompt instead." )
 goals+=( "Good job getting a shell! Now hurry and grab the password for bandit27!" )
 goals+=( "There is a git repository at ssh://bandit27-git@localhost/home/bandit27-git/repo via the port 2220. The password for the user bandit27-git is the same as for the user bandit27.\n\nClone the repository and find the password for the next level." )
-goals+=( "There is a git repository at ssh://bandit28-git@localhost/home/bandit28-git/repo via the port 2220. The password for the user bandit28-git is the same as for the user bandit28.\n\nClone the repository and find the password for the next level." )
+goals+=( "There is a git repository at ssh://bandit28-git@localhost/home/bandit28-git/repo via the port 2220. The password for the user bandit27-git is the same as for the user bandit27.\n\nClone the repository and find the password for the next level." )
 goals+=( "There is a git repository at ssh://bandit29-git@localhost/home/bandit29-git/repo via the port 2220. The password for the user bandit29-git is the same as for the user bandit29.\n\nClone the repository and find the password for the next level." )
 #level 30
 goals+=( "There is a git repository at ssh://bandit30-git@localhost/home/bandit30-git/repo via the port 2220. The password for the user bandit30-git is the same as for the user bandit30.\n\nClone the repository and find the password for the next level." )
@@ -445,8 +443,6 @@ echo 'exec more /etc/motd' >> /usr/bin/showtext
 echo 'exit 0' >> /usr/bin/showtext
 
 chmod +x "/usr/bin/showtext"
-
-
 usermod -s /usr/bin/showtext bandit26
 echo "done"
 
@@ -462,6 +458,21 @@ chmod 4750 "/home/bandit26/bandit27-do"
 echo "done"
 
 
+
+#level27 -> level28
+echo -n "Creating level 27... "
+
+useradd -m "bandit27-git" -k "/etc/bandit_skel" -s "/usr/bin/git-shell" -p `openssl passwd -1 -salt "bandit" "${passwords[28]}"`
+
+sudo -u bandit27-git bash -c "git config --global user.name 'bandit' && git config --global user.email 'bandit@world.net' \
+&& mkdir -p /home/bandit27-git/repo \
+&& cd /home/bandit27-git/repo \
+&& git init -q \
+&& echo 'The password is : ${passwords[28]}' > readme \
+&& git add . \
+&& git commit -m 'first commit'"
+
+echo "done"
 
 
 
