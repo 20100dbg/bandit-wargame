@@ -484,15 +484,12 @@ sudo -u bandit28-git bash -c "git config --global user.name 'bandit' && git conf
 && mkdir -p /home/bandit28-git/repo \
 && cd /home/bandit28-git/repo \
 && git init -q \
-
 && echo -e '# Bandit Notes\nSome notes for level29 of bandit.\n\n## credentials\n\n- username: bandit29\n- password: <TBD>\n' > readme \
 && git add . \
 && git commit -m 'initial commit' \
-
 && echo -e '# Bandit Notes\nSome notes for level29 of bandit.\n\n## credentials\n\n- username: bandit29\n- password: ${passwords[29]}\n' > readme \
 && git add . \
 && git commit -m 'add missing data' \
-
 && echo -e '# Bandit Notes\nSome notes for level29 of bandit.\n\n## credentials\n\n- username: bandit29\n- password: xxxxxxxxxxxx\n' > readme \
 && git add . \
 && git commit -m 'fix info leak'"
@@ -504,41 +501,78 @@ echo "done"
 echo -n "Creating level 29... "
 useradd -m "bandit29-git" -k "/etc/bandit_skel" -s "/usr/bin/git-shell" -p `openssl passwd -1 -salt "bandit" "${passwords[29]}"`
 
-sudo -u bandit28-git bash -c "git config --global user.name 'bandit' && git config --global user.email 'bandit@world.net' \
+sudo -u bandit29-git bash -c "git config --global user.name 'bandit' && git config --global user.email 'bandit@world.net' \
 && mkdir -p /home/bandit29-git/repo \
 && cd /home/bandit29-git/repo \
 && git init -q \
-
 && echo -e '# Bandit Notes\nSome notes for level29 of bandit.\n\n## credentials\n\n- username: bandit29\n- password: <no passwords in production !>\n' > readme \
 && git add . \
 && git commit -m 'initial commit' \
-
 && echo -e '# Bandit Notes\nSome notes for level30 of bandit.\n\n## credentials\n\n- username: bandit30\n- password: <no passwords in production !>\n' > readme \
 && git add . \
 && git commit -m 'fix username' \
-
 && git checkout -b sploits-dev \
-&& mkdir exploits && cd exploits \
-&& touch pwn_everything.sh \
+&& mkdir exploits \
+&& touch exploits/pwn_everything.sh \
 && git add . \
 && git commit -m 'just adding the ultime exploit' \
-
 && git checkout -b dev \
-&& mkdir code && cd code \
-&& touch simple_script.sh \
+&& mkdir code \
+&& touch code/simple_script.sh \
 && git add . \
 && git commit -m 'Simple script' \
-
-&& git checkout -b dev \
 && echo -e '# Bandit Notes\nSome notes for level30 of bandit.\n\n## credentials\n\n- username: bandit30\n- password: ${passwords[30]}\n' > readme \
 && git add . \
-&& git commit -m 'add data needed'"
+&& git commit -m 'add data needed' \
+&& git checkout master"
 
 echo "done"
 
 
+#level30 -> level31
+echo -n "Creating level 30... "
+
+useradd -m "bandit30-git" -k "/etc/bandit_skel" -s "/usr/bin/git-shell" -p `openssl passwd -1 -salt "bandit" "${passwords[30]}"`
+
+sudo -u bandit30-git bash -c "git config --global user.name 'bandit' && git config --global user.email 'bandit@world.net' \
+&& mkdir -p /home/bandit30-git/repo \
+&& cd /home/bandit30-git/repo \
+&& git init -q \
+&& echo 'Just an empty file ahahah' > readme \
+&& git add . \
+&& git commit -m 'initial commit'"
+
+sudo -u bandit30-git bash -c "cd /home/bandit30-git/repo \
+&& echo ${passwords[31]@Q} \
+&& echo ${passwords[31]@Q} | git hash-object -w --stdin > hash \
+&& cat hash \
+&& git tag -a -m ${passwords[31]@Q} secret < hash \
+&& cat hash | tr -d '\n' > .git/packed-refs \
+&& echo ' refs/tags/secret' >> .git/packed-refs \
+&& rm .git/refs/tags/secret \
+&& rm hash"
 
 
+echo "done"
+
+
+#level31 -> level32
+echo -n "Creating level 31... "
+
+useradd -m "bandit31-git" -k "/etc/bandit_skel" -s "/usr/bin/git-shell" -p `openssl passwd -1 -salt "bandit" "${passwords[31]}"`
+
+sudo -u bandit31-git bash -c "git config --global user.name 'bandit' && git config --global user.email 'bandit@world.net' \
+&& mkdir -p /home/bandit31-git/repo \
+&& cd /home/bandit31-git/repo \
+&& git init -q \
+&& echo 'Just an empty file ahahah' > readme \
+&& git add . \
+&& git commit -m 'initial commit'"
+
+sed "s/__PLACEHOLDER__/${passwords[32]}/" "$current_path/scripts/script31" > "/home/bandit31-git/repo/.git/hooks/pre-push"
+chmod +x /home/bandit31-git/repo/.git/hooks/pre-push
+
+echo "done"
 
 
 

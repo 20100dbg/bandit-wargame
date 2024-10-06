@@ -1,0 +1,12 @@
+#!/bin/sh
+exec 1>&2
+
+git diff --cached --name-status --diff-filter=ACM | cut -f 2 \
+	| while read st file; do
+
+	  check=$(cat "$st" | grep 'Can I come in?')
+	  if [ "$check" != '' ] ; then
+	    echo 'Password is : __PLACEHOLDER__'
+		fi
+done
+exit 1
