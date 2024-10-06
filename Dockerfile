@@ -6,7 +6,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 # Update package lists and install OpenSSH server
 RUN apt-get update && \
-    apt-get install -y openssh-server python3 bzip2 cron xxd gcc && \
+    apt-get install -y openssh-server python3 bzip2 cron xxd gcc git && \
     apt-get clean
 
 # Alias python to python3
@@ -33,7 +33,8 @@ COPY install.sh /install.sh
 COPY motd.txt /motd.txt
 
 # Avoid an error with the motd
-RUN touch /etc/motd
+RUN echo> /etc/motd
+RUN chmod -x /etc/update-motd.d/*
 
 
 # Make sure the install.sh script is executable

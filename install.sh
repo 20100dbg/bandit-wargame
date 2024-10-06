@@ -30,8 +30,8 @@ create_user() {
 set_perms() {
 	# $1 = current user id
 	# $2 = file to set perms
-	chown bandit$x "$2"
-	chgrp bandit$(($1+1)) "$2"
+	chown bandit$(($1+1)) "$2"
+	chgrp bandit$1 "$2"
 	chmod 640 "$2"
 }
 
@@ -462,19 +462,92 @@ echo "done"
 #level27 -> level28
 echo -n "Creating level 27... "
 
-useradd -m "bandit27-git" -k "/etc/bandit_skel" -s "/usr/bin/git-shell" -p `openssl passwd -1 -salt "bandit" "${passwords[28]}"`
+useradd -m "bandit27-git" -k "/etc/bandit_skel" -s "/usr/bin/git-shell" -p `openssl passwd -1 -salt "bandit" "${passwords[27]}"`
 
 sudo -u bandit27-git bash -c "git config --global user.name 'bandit' && git config --global user.email 'bandit@world.net' \
 && mkdir -p /home/bandit27-git/repo \
 && cd /home/bandit27-git/repo \
 && git init -q \
-&& echo 'The password is : ${passwords[28]}' > readme \
+&& echo 'The password to the next level is : ${passwords[28]}' > readme \
 && git add . \
-&& git commit -m 'first commit'"
+&& git commit -m 'initial commit'"
 
 echo "done"
 
 
 
+#level28 -> level29
+echo -n "Creating level 28... "
+useradd -m "bandit28-git" -k "/etc/bandit_skel" -s "/usr/bin/git-shell" -p `openssl passwd -1 -salt "bandit" "${passwords[28]}"`
+
+sudo -u bandit28-git bash -c "git config --global user.name 'bandit' && git config --global user.email 'bandit@world.net' \
+&& mkdir -p /home/bandit28-git/repo \
+&& cd /home/bandit28-git/repo \
+&& git init -q \
+
+&& echo -e '# Bandit Notes\nSome notes for level29 of bandit.\n\n## credentials\n\n- username: bandit29\n- password: <TBD>\n' > readme \
+&& git add . \
+&& git commit -m 'initial commit' \
+
+&& echo -e '# Bandit Notes\nSome notes for level29 of bandit.\n\n## credentials\n\n- username: bandit29\n- password: ${passwords[29]}\n' > readme \
+&& git add . \
+&& git commit -m 'add missing data' \
+
+&& echo -e '# Bandit Notes\nSome notes for level29 of bandit.\n\n## credentials\n\n- username: bandit29\n- password: xxxxxxxxxxxx\n' > readme \
+&& git add . \
+&& git commit -m 'fix info leak'"
+echo "done"
+
+
+
+#level29 -> level30
+echo -n "Creating level 29... "
+useradd -m "bandit29-git" -k "/etc/bandit_skel" -s "/usr/bin/git-shell" -p `openssl passwd -1 -salt "bandit" "${passwords[29]}"`
+
+sudo -u bandit28-git bash -c "git config --global user.name 'bandit' && git config --global user.email 'bandit@world.net' \
+&& mkdir -p /home/bandit29-git/repo \
+&& cd /home/bandit29-git/repo \
+&& git init -q \
+
+&& echo -e '# Bandit Notes\nSome notes for level29 of bandit.\n\n## credentials\n\n- username: bandit29\n- password: <no passwords in production !>\n' > readme \
+&& git add . \
+&& git commit -m 'initial commit' \
+
+&& echo -e '# Bandit Notes\nSome notes for level30 of bandit.\n\n## credentials\n\n- username: bandit30\n- password: <no passwords in production !>\n' > readme \
+&& git add . \
+&& git commit -m 'fix username' \
+
+&& git checkout -b sploits-dev \
+&& mkdir exploits && cd exploits \
+&& touch pwn_everything.sh \
+&& git add . \
+&& git commit -m 'just adding the ultime exploit' \
+
+&& git checkout -b dev \
+&& mkdir code && cd code \
+&& touch simple_script.sh \
+&& git add . \
+&& git commit -m 'Simple script' \
+
+&& git checkout -b dev \
+&& echo -e '# Bandit Notes\nSome notes for level30 of bandit.\n\n## credentials\n\n- username: bandit30\n- password: ${passwords[30]}\n' > readme \
+&& git add . \
+&& git commit -m 'add data needed'"
+
+echo "done"
+
+
+
+
+
+
+
+#bandit27 : mdp dans le readme
+#bandit28 : mdp dans le 2/3 commit
+#bandit29 : mdp dans une remote branch dev
+#bandit30 : mdp dans un tag secret
+#bandit31 : il faut push un fichier texte avec "may i come in" -> hook pre-push (?) qui donne le password
+
+
 echo;
-echo "All done, reboot and enjoy !"
+echo "All done, enjoy !"

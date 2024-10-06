@@ -1,27 +1,3 @@
-### Install instructions
-
-We may need to install xxd
-
-```
-sudo apt install xxd
-```
-
-Clone or zip download this repository
-
-```
-git clone https://github.com/20100dbg/bandit-wargame
-```
-
-Start installer as root
-
-```
-sudo ./install.sh
-```
-
-You'll need to reboot to activate startup scripts
-
-Enjoy !
-
 ### Run it in a docker container
 
 Alternatively, you can run it in a container.
@@ -46,19 +22,47 @@ Connect as user `bandit0` (it's a zero!) with:
 ssh bandit0@localhost -p 2220
 ```
 
+
+### Install instructions
+
+You can also install it manually, for example in a VM :
+
+We may need some softwares :
+```
+sudo apt install xxd git bzip2 gcc
+```
+
+Clone or zip download this repository
+
+```
+git clone https://github.com/20100dbg/bandit-wargame
+```
+
+Start installer as root
+
+```
+sudo ./install.sh
+```
+
+You'll need to reboot to activate startup scripts
+
+Enjoy !
+
+
+
 ### Todo
 - Level checked : 26
 - level 16b : hide another flag
+- level 16 : hide some ports ?
 - test the docker file
 
 new levels :
 - suid on bin like find, cat, base64, cp 
 - flag in env variable
-- find recently edited file
+- find recently edited file (don't forget a script that update the file frequently)
 - mount nfs
 - jail python
-- script writable ?
-- find a process XXX -> .sh lisible ? port d'écoute en paramètre ?
+- find a process XXX -> readable .sh ? listening port as parameter ?
 - find a service -> flag in .service file ? in .sh file ?
 
 - exploit PATH injection
@@ -66,3 +70,8 @@ new levels :
 - capabilities
 - Wildcard Injection
 - unquoted string in bash script
+
+
+### Contributors
+[https://github.com/kylir](Kylir)
+
