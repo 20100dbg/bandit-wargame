@@ -58,9 +58,9 @@ Enjoy !
 - test the docker file
 
 new levels :
-- suid on bin like find, cat, base64, cp 
 - flag in env variable
 - find recently edited file (don't forget a script that update the file frequently)
+- suid on bin like find, cat, base64, cp 
 - mount nfs
 - jail python
 - find a process XXX -> readable .sh ? listening port as parameter ?

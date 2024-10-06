@@ -1,5 +1,8 @@
 #!/bin/sh
-exec 1>&2
+echo 'here 0 !!!!!!!!'
+
+git diff --cached --name-status --diff-filter=ACM > mydiff
+
 
 git diff --cached --name-status --diff-filter=ACM | cut -f 2 \
 	| while read st file; do
@@ -9,4 +12,5 @@ git diff --cached --name-status --diff-filter=ACM | cut -f 2 \
 	    echo 'Password is : __PLACEHOLDER__'
 		fi
 done
+echo 'here 2 !!!!!!!!'
 exit 1

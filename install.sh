@@ -110,7 +110,7 @@ passwords=()
 
 echo -n "Creating users... "
 
-for i in {0..33}; do
+for i in {0..38}; do
 	pass=$(create_user "bandit$i")
 
   	$(create_motd "$i" "${goals[$i]}")
@@ -543,9 +543,7 @@ sudo -u bandit30-git bash -c "git config --global user.name 'bandit' && git conf
 && git commit -m 'initial commit'"
 
 sudo -u bandit30-git bash -c "cd /home/bandit30-git/repo \
-&& echo ${passwords[31]@Q} \
 && echo ${passwords[31]@Q} | git hash-object -w --stdin > hash \
-&& cat hash \
 && git tag -a -m ${passwords[31]@Q} secret < hash \
 && cat hash | tr -d '\n' > .git/packed-refs \
 && echo ' refs/tags/secret' >> .git/packed-refs \
@@ -561,15 +559,24 @@ echo -n "Creating level 31... "
 
 useradd -m "bandit31-git" -k "/etc/bandit_skel" -s "/usr/bin/git-shell" -p `openssl passwd -1 -salt "bandit" "${passwords[31]}"`
 
+#&& git config --global receive.denyCurrentBranch updateInstead \
+
 sudo -u bandit31-git bash -c "git config --global user.name 'bandit' && git config --global user.email 'bandit@world.net' \
 && mkdir -p /home/bandit31-git/repo \
 && cd /home/bandit31-git/repo \
 && git init -q \
 && echo 'Just an empty file ahahah' > readme \
 && git add . \
-&& git commit -m 'initial commit'"
+&& git commit -m 'initial commit' \
+&& mv .git ../repo.git \
+&& cd .. \
+&& rm -fr repo \
+&& cd repo.git \
+&& git config --bool core.bare true"
 
-sed "s/__PLACEHOLDER__/${passwords[32]}/" "$current_path/scripts/script31" > "/home/bandit31-git/repo/.git/hooks/pre-push"
+sed "s/__PLACEHOLDER__/${passwords[32]}/" "$current_path/scripts/script31" > "/home/bandit31-git/repo.git/hooks/pre-push"
+chown bandit31-git "/home/bandit31-git/repo.git/hooks/pre-push"
+chgrp bandit31-git "/home/bandit31-git/repo.git/hooks/pre-push"
 chmod +x /home/bandit31-git/repo/.git/hooks/pre-push
 
 echo "done"
@@ -581,6 +588,73 @@ echo "done"
 #bandit29 : mdp dans une remote branch dev
 #bandit30 : mdp dans un tag secret
 #bandit31 : il faut push un fichier texte avec "may i come in" -> hook pre-push (?) qui donne le password
+
+
+#level32 -> level33
+#shell jail
+echo -n "Creating level 32... "
+echo "This level is not done yet. Password for the next level is ${passwords[33]}" > "/home/bandit32/readme"
+echo "done"
+
+
+#level33 -> level34
+echo -n "Creating level 33... "
+exportbandit34=${passwords[34]}
+echo "done"
+
+
+#level34 -> level35
+echo -n "Creating level 34... "
+mkdir -p "/usr/local/share/man/"
+rnd_file=$(gen_passwd)
+
+echo ${passwords[35]} > "/usr/local/share/man/$rnd_file"
+
+echo "* * * * * bandit35 /usr/bin/cronjob_bandit35.sh &> /dev/null" >> /etc/cron.d/cronjob_bandit22
+sed "s/__PLACEHOLDER__/$(rnd_file)/" "$current_path/scripts/script35.sh" > "/usr/bin/cronjob_bandit35.sh"
+
+chown bandit35 "/usr/bin/cronjob_bandit35.sh"
+chgrp bandit35 "/usr/bin/cronjob_bandit35.sh"
+chmod 750 "/usr/bin/cronjob_bandit35.sh"
+
+echo "done"
+
+
+#level35 -> level36
+echo -n "Creating level 35... "
+
+cp /bin/cp /home/bandit35/cp
+
+chown bandit36 "/home/bandit35/cp"
+chgrp bandit35 "/home/bandit35/cp"
+chmod 4750 "/home/bandit35/cp"
+
+echo "done"
+
+
+#level36 -> level37
+echo -n "Creating level 36... "
+
+#NFS
+#sudo apt install nfs-kernel-server
+mkdir -p /mnt/bandit36
+chown bandit37 "/mnt/bandit36"
+chgrp bandit36 "/mnt/bandit36"
+chmod 750 "/mnt/bandit36"
+echo ${passwords[37]} > "/mnt/bandit36/readme"
+
+exportfs -a
+systemctl restart nfs-kernel-server
+
+echo "done"
+
+
+#level37 -> level38
+echo -n "Creating level 37... "
+echo ${passwords[38]} > "/home/bandit37/readme"
+usermod -s /usr/bin/python bandit37
+echo "done"
+
 
 
 echo;
