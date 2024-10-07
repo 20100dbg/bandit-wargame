@@ -1,16 +1,20 @@
-#!/bin/sh
-echo 'here 0 !!!!!!!!'
+#!/bin/bash
+#
 
-git diff --cached --name-status --diff-filter=ACM > mydiff
+while read oldref newref refname; do
 
+    newFiles=$(git diff --stat --name-only --diff-filter=ACMRT ${oldref}..${newref})
 
-git diff --cached --name-status --diff-filter=ACM | cut -f 2 \
-	| while read st file; do
+    for filename in $newFiles; do
 
-	  check=$(cat "$st" | grep 'Can I come in?')
-	  if [ "$check" != '' ] ; then
-	    echo 'Password is : __PLACEHOLDER__'
-		fi
+        if [[ "$filename" =~ "key.txt" ]]; then
+
+            if [[ "$( git show $newref:$filename )" =~ "Can I come in?" ]]; then
+                echo -e "\n\nHere's your password : __PLACEHOLDER__\n\n"
+            fi
+
+        fi
+    done
 done
-echo 'here 2 !!!!!!!!'
+
 exit 1

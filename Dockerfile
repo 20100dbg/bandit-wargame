@@ -6,7 +6,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 # Update package lists and install OpenSSH server
 RUN apt-get update && \
-    apt-get install -y openssh-server python3 bzip2 cron xxd gcc git && \
+    apt-get install -y openssh-server python3 bzip2 cron xxd gcc git nfs-kernel-server && \
     apt-get clean
 
 # Alias python to python3

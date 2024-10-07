@@ -29,7 +29,7 @@ You can also install it manually, for example in a VM :
 
 We may need some softwares :
 ```
-sudo apt install xxd git bzip2 gcc
+sudo apt install xxd git bzip2 gcc nfs-kernel-server
 ```
 
 Clone or zip download this repository
@@ -53,8 +53,10 @@ Enjoy !
 ### Todo
 - Level checked : 30
 - level 16b : hide another flag
-- level 16 : hide some ports ?
-- level 31 : check filename
+
+34->35
+36->37
+
 - test the docker file
 
 new levels :
