@@ -30,9 +30,10 @@ create_user() {
 set_perms() {
 	# $1 = current user id
 	# $2 = file to set perms
+	# $3 = chmod to apply
 	chown bandit$(($1+1)) "$2"
 	chgrp bandit$1 "$2"
-	chmod 640 "$2"
+	chmod $3 "$2"
 }
 
 #Create user MOTD (and few settings) :
@@ -90,6 +91,14 @@ goals+=( "There is a git repository at ssh://bandit29-git@localhost/home/bandit2
 goals+=( "There is a git repository at ssh://bandit30-git@localhost/home/bandit30-git/repo via the port 2220. The password for the user bandit30-git is the same as for the user bandit30.\n\nClone the repository and find the password for the next level." )
 goals+=( "There is a git repository at ssh://bandit31-git@localhost/home/bandit31-git/repo via the port 2220. The password for the user bandit31-git is the same as for the user bandit31.\n\nClone the repository and find the password for the next level." )
 goals+=( "After all this git stuff, it’s time for another escape. Good luck!" )
+goals+=( "The password for the next level is stored in an environment variable" )
+goals+=( "The password for the next level is stored in a recently modified file" )
+goals+=( "Get the password for the next level using a SUID file" )
+goals+=( "Get the password for the next level using a SUID file" )
+goals+=( "Get the password for the next level using a SUID file" )
+goals+=( "The password for the next level is stored in a NFS share" )
+goals+=( "The password for the next level is stored in your home folder, but the shell has been changed" )
+#level 40
 
 
 mv /etc/motd /etc/motd.bak
@@ -110,10 +119,10 @@ passwords=()
 
 echo -n "Creating users... "
 
-for i in {0..38}; do
+for i in {0..40}; do
 	pass=$(create_user "bandit$i")
 
-  	$(create_motd "$i" "${goals[$i]}")
+  	$(create_motd "$i" "${goals[$i]}\n\n")
 	passwords+=( $pass )
 done
 
@@ -123,21 +132,21 @@ echo "done"
 #level0 -> level1
 echo -n "Creating level 0... "
 echo -e "\nThe password you are looking for is: ${passwords[1]}\n" > '/home/bandit0/readme'
-set_perms 0 '/home/bandit0/readme'
+set_perms 0 '/home/bandit0/readme' 640
 echo "done"
 
 
 #level1 -> level2
 echo -n "Creating level 1... "
 echo ${passwords[2]} > '/home/bandit1/-'
-set_perms 1 '/home/bandit1/-'
+set_perms 1 '/home/bandit1/-' 640
 echo "done"
 
 
 #level2 -> level3
 echo -n "Creating level 2... "
 echo ${passwords[3]} > "/home/bandit2/spaces in this filename"
-set_perms 2 "/home/bandit2/spaces in this filename"
+set_perms 2 "/home/bandit2/spaces in this filename" 640
 echo "done"
 
 
@@ -145,7 +154,7 @@ echo "done"
 echo -n "Creating level 3... "
 mkdir /home/bandit3/inhere
 echo ${passwords[4]} > '/home/bandit3/inhere/...Hiding-From-You'
-set_perms 3 '/home/bandit3/inhere/...Hiding-From-You'
+set_perms 3 '/home/bandit3/inhere/...Hiding-From-You' 640
 echo "done"
 
 
@@ -161,7 +170,7 @@ for i in {0..9}; do
 	else
 	    cat /dev/urandom | fold -w 32 | head -n 1 > "/home/bandit4/inhere/-file0$i"
 	fi
-	set_perms 4 "/home/bandit4/inhere/-file0$i"
+	set_perms 4 "/home/bandit4/inhere/-file0$i" 640
 done
 echo "done"
 
@@ -215,7 +224,7 @@ echo "done"
 echo -n "Creating level 6... "
 mkdir -p /var/lib/dpkg/info/
 echo ${passwords[7]} > /var/lib/dpkg/info/bandit7.password
-set_perms 6 /var/lib/dpkg/info/bandit7.password
+set_perms 6 /var/lib/dpkg/info/bandit7.password 640
 echo "done"
 
 
@@ -297,7 +306,7 @@ echo "done"
 echo -n "Creating level 13... "
 ssh-keygen -q -f ./sshkey.private -N "" 1>/dev/null 2>/dev/null
 mv ./sshkey.private /home/bandit13/
-set_perms 13 "/home/bandit13/sshkey.private"
+set_perms 13 "/home/bandit13/sshkey.private" 640
 mv ./sshkey.private.pub /home/bandit14/.ssh/authorized_keys
 echo "done"
 
@@ -335,7 +344,7 @@ echo "done"
 echo -n "Creating level 17... "
 
 touch "/home/bandit17/passwords.old"
-set_perms 17 "/home/bandit17/passwords.old"
+set_perms 17 "/home/bandit17/passwords.old" 640
 
 for i in {1..100}; do
 	gen_passwd >> "/home/bandit17/passwords.old"
@@ -356,20 +365,14 @@ echo "done"
 #level19 -> level20
 echo -n "Creating level 19... "
 gcc "$current_path/scripts/script19.c" -o "/home/bandit19/bandit20-do"
-
-chown bandit20 "/home/bandit19/bandit20-do"
-chgrp bandit19 "/home/bandit19/bandit20-do"
-chmod 4750 "/home/bandit19/bandit20-do"
+set_perms 19 "/home/bandit19/bandit20-do" 4750
 echo "done"
 
 
 #level20 -> level21
 echo -n "Creating level 20... "
 gcc "$current_path/scripts/script20.c" -o "/home/bandit20/suconnect"
-
-chown bandit21 "/home/bandit20/suconnect"
-chgrp bandit20 "/home/bandit20/suconnect"
-chmod 4750 "/home/bandit20/suconnect"
+set_perms 20 "/home/bandit20/suconnect" 4750
 echo "done"
 
 
@@ -380,10 +383,7 @@ echo "* * * * * bandit22 /usr/bin/cronjob_bandit22.sh &> /dev/null" >> /etc/cron
 
 sed "s/__PLACEHOLDER__/$(gen_passwd)/" "$current_path/scripts/script22.sh" > "/usr/bin/cronjob_bandit22.sh"
 
-
-chown bandit22 "/usr/bin/cronjob_bandit22.sh"
-chgrp bandit21 "/usr/bin/cronjob_bandit22.sh"
-chmod 750 "/usr/bin/cronjob_bandit22.sh"
+set_perms 21 "/usr/bin/cronjob_bandit22.sh" 750
 echo "done"
 
 
@@ -393,9 +393,7 @@ echo "@reboot bandit23 /usr/bin/cronjob_bandit23.sh &> /dev/null" > /etc/cron.d/
 echo "* * * * * bandit23 /usr/bin/cronjob_bandit23.sh &> /dev/null" >> /etc/cron.d/cronjob_bandit23
 
 cp "$current_path/scripts/script23.sh" "/usr/bin/cronjob_bandit23.sh"
-chown bandit23 "/usr/bin/cronjob_bandit23.sh"
-chgrp bandit22 "/usr/bin/cronjob_bandit23.sh"
-chmod 750 "/usr/bin/cronjob_bandit23.sh"
+set_perms 22 "/usr/bin/cronjob_bandit23.sh" 750
 echo "done"
 
 
@@ -409,9 +407,7 @@ mkdir -p "/var/spool/bandit24/foo"
 chmod 777 "/var/spool/bandit24/foo"
 
 cp "$current_path/scripts/script24.sh" "/usr/bin/cronjob_bandit24.sh"
-chown bandit24 "/usr/bin/cronjob_bandit24.sh"
-chgrp bandit23 "/usr/bin/cronjob_bandit24.sh"
-chmod 750 "/usr/bin/cronjob_bandit24.sh"
+set_perms 23 "/usr/bin/cronjob_bandit24.sh" 750
 echo "done"
 
 
@@ -431,7 +427,7 @@ echo -n "Creating level 25... "
 
 ssh-keygen -q -f ./bandit26.sshkey -N "" 1>/dev/null 2>/dev/null
 mv ./bandit26.sshkey /home/bandit25/
-set_perms 25 "/home/bandit25/bandit26.sshkey"
+set_perms 25 "/home/bandit25/bandit26.sshkey" 640
 mv ./bandit26.sshkey.pub /home/bandit26/.ssh/authorized_keys
 
 touch /usr/bin/showtext
@@ -448,10 +444,7 @@ echo "done"
 #level26 -> level27
 echo -n "Creating level 26... "
 gcc "$current_path/scripts/script19.c" -o "/home/bandit26/bandit27-do"
-
-chown bandit27 "/home/bandit26/bandit27-do"
-chgrp bandit26 "/home/bandit26/bandit27-do"
-chmod 4750 "/home/bandit26/bandit27-do"
+set_perms 26 "/home/bandit26/bandit27-do" 4750
 
 echo "done"
 
@@ -578,17 +571,18 @@ chmod +x /home/bandit31-git/repo.git/hooks/pre-receive
 echo "done"
 
 
-
 #level32 -> level33
 #shell jail
 echo -n "Creating level 32... "
-echo "This level is not done yet. Password for the next level is ${passwords[33]}" > "/home/bandit32/readme"
+gcc "$current_path/scripts/script32.c" -o "/home/bandit32/uppershell"
+set_perms 32 "/home/bandit32/uppershell" 4750
+usermod -s /home/bandit32/uppershell bandit32
 echo "done"
 
 
 #level33 -> level34
 echo -n "Creating level 33... "
-echo 'export bandit34=${passwords[34]}' >> /home/bandit33/.profile
+echo "export bandit34=${passwords[34]}" >> /home/bandit33/.profile
 echo "done"
 
 
@@ -605,6 +599,7 @@ echo "* * * * * bandit35 /usr/bin/cronjob_bandit35.sh &> /dev/null" >> /etc/cron
 
 sed "s/__PLACEHOLDER__/$rnd_file/" "$current_path/scripts/script35.sh" > "/usr/bin/cronjob_bandit35.sh"
 
+
 chown bandit35 "/usr/bin/cronjob_bandit35.sh"
 chgrp bandit35 "/usr/bin/cronjob_bandit35.sh"
 chmod 750 "/usr/bin/cronjob_bandit35.sh"
@@ -615,36 +610,54 @@ echo "done"
 #level35 -> level36
 echo -n "Creating level 35... "
 
-cp /bin/cp /home/bandit35/cp
-
-chown bandit36 "/home/bandit35/cp"
-chgrp bandit35 "/home/bandit35/cp"
-chmod 4750 "/home/bandit35/cp"
-
+cp /bin/base64 /home/bandit35/base64
+set_perms 35 "/home/bandit35/base64" 4750
 echo "done"
 
 
 #level36 -> level37
 echo -n "Creating level 36... "
 
-mkdir -p /mnt/bandit36
-chown bandit37 "/mnt/bandit36"
-chgrp bandit36 "/mnt/bandit36"
-chmod 750 "/mnt/bandit36"
-echo ${passwords[37]} > "/mnt/bandit36/readme"
-set_perms 36 "/mnt/bandit36/readme"
-
-echo '/mnt/bandit36 127.0.0.1/24(ro,sync,no_subtree_check)' >> /etc/exports
-exportfs -a
-
+cp /bin/find /home/bandit36/find
+set_perms 36 "/home/bandit36/find" 4750
 echo "done"
 
 
 #level37 -> level38
 echo -n "Creating level 37... "
-echo ${passwords[38]} > "/home/bandit37/readme"
-set_perms 37 "/home/bandit37/readme"
-usermod -s /usr/bin/python bandit37
+
+cp /bin/cp /home/bandit37/cp
+set_perms 37 "/home/bandit37/cp" 4750
+echo "done"
+
+
+#level38 -> level39
+echo -n "Creating level 38... "
+
+mkdir -p /mnt/bandit38
+set_perms 38 "/mnt/bandit38" 750
+
+echo ${passwords[39]} > "/mnt/bandit38/readme"
+set_perms 38 "/mnt/bandit38/readme" 640
+
+echo '/mnt/bandit38 *(ro,subtree_check,all_squash)' >> /etc/exports
+service nfs-kernel-server restart
+#exportfs -a
+
+echo "done"
+
+
+#level39 -> level40
+echo -n "Creating level 39... "
+echo ${passwords[40]} > "/home/bandit39/readme"
+set_perms 37 "/home/bandit39/readme" 640
+usermod -s /usr/bin/python bandit39
+echo "done"
+
+
+#level40
+echo -n "Creating level 40... "
+echo 'Thanks for playing !' > '/home/bandit40/readme'
 echo "done"
 
 

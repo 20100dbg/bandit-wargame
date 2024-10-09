@@ -1,8 +1,17 @@
+### Install instructions
+
+You can install bandit@home with docker or manually. If you chose the manual version, we recommend to install it in a virtual machine.
+
+Before anything, clone this repository (you can also zip download it)
+
+```
+git clone https://github.com/20100dbg/bandit-wargame
+```
+
+
 ### Run it in a docker container
 
-Alternatively, you can run it in a container.
-
-Clone the repository and build the container
+Build the container
 
 ```
 docker build . -t bandit
@@ -16,7 +25,7 @@ docker run -d --name bandit -p 2220:22 bandit:latest
 
 This will start a ssh server listening on port 2220.
 
-Connect as user `bandit0` (it's a zero!) with:
+Connect as user `bandit0`, password `bandit0` with:
 
 ```
 ssh bandit0@localhost -p 2220
@@ -25,17 +34,10 @@ ssh bandit0@localhost -p 2220
 
 ### Install instructions
 
-You can also install it manually, for example in a VM :
 
 We may need some softwares :
 ```
 sudo apt install xxd git bzip2 gcc nfs-kernel-server
-```
-
-Clone or zip download this repository
-
-```
-git clone https://github.com/20100dbg/bandit-wargame
 ```
 
 Start installer as root
@@ -44,14 +46,12 @@ Start installer as root
 sudo ./install.sh
 ```
 
-You'll need to reboot to activate startup scripts
-
 Enjoy !
 
 
 
 ### Todo
-- Level checked : 30
+- Level checked : 31
 - level 16b : hide another flag
 
 34->35
