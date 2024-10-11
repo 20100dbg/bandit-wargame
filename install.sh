@@ -15,7 +15,7 @@ create_user() {
 		pass=$(gen_passwd)
 	fi
 
-	useradd -m "$1" -k "/etc/bandit_skel" -s "/bin/bash" -p `openssl passwd -1 -salt "bandit" "$pass"`
+	useradd -m "$1" -k "/etc/bandit_skel" -s "/bin/bash" -p $(openssl passwd -1 -salt "bandit" "$pass")
 	
 	mkdir "/home/$1/.ssh"
 	echo "$pass" > "/etc/bandit_pass/$1"
@@ -101,6 +101,7 @@ goals+=( "The password for the next level is stored in your home folder, but the
 #level 40
 
 
+touch /etc/motd
 mv /etc/motd /etc/motd.bak
 cat motd.txt >/etc/motd
 
@@ -192,7 +193,7 @@ do
 			size=$(( RANDOM ))
 		fi
 
-		if [[ $(( RANDOM % 3 )) -eq 0 ]]
+		if [[ $(( RANDOM % 5 )) -eq 0 ]]
 		then
 			cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w $size | head -n 1 > "/home/bandit5/inhere/maybehere$i/file$j"
 		else
@@ -210,10 +211,10 @@ do
 	done
 done
 
-rnd_dir=`seq -w 0 19 | shuf | head -n 1`
-rnd_file=`seq -w 0 9 | shuf | head -n 1`
+rnd_dir=$(seq -w 0 19 | shuf | head -n 1)
+rnd_file=$(seq -w 0 9 | shuf | head -n 1)
 
-spaces=`python -c "print(' ' * 984)"`
+spaces=$(python -c "print(' ' * 984)")
 echo "The password is ${passwords[6]}$spaces" > "/home/bandit5/inhere/maybehere$rnd_dir/file$rnd_file"
 chmod 640 "/home/bandit5/inhere/maybehere$rnd_dir/file$rnd_file"
 
@@ -453,7 +454,7 @@ echo "done"
 #level27 -> level28
 echo -n "Creating level 27... "
 
-useradd -m "bandit27-git" -k "/etc/bandit_skel" -s "/usr/bin/git-shell" -p `openssl passwd -1 -salt "bandit" "${passwords[27]}"`
+useradd -m "bandit27-git" -k "/etc/bandit_skel" -s "/usr/bin/git-shell" -p $(openssl passwd -1 -salt "bandit" "${passwords[27]}")
 
 sudo -u bandit27-git bash -c "git config --global user.name 'bandit' && git config --global user.email 'bandit@world.net' \
 && mkdir -p /home/bandit27-git/repo \
@@ -469,7 +470,7 @@ echo "done"
 
 #level28 -> level29
 echo -n "Creating level 28... "
-useradd -m "bandit28-git" -k "/etc/bandit_skel" -s "/usr/bin/git-shell" -p `openssl passwd -1 -salt "bandit" "${passwords[28]}"`
+useradd -m "bandit28-git" -k "/etc/bandit_skel" -s "/usr/bin/git-shell" -p $(openssl passwd -1 -salt "bandit" "${passwords[28]}")
 
 sudo -u bandit28-git bash -c "git config --global user.name 'bandit' && git config --global user.email 'bandit@world.net' \
 && mkdir -p /home/bandit28-git/repo \
@@ -490,7 +491,7 @@ echo "done"
 
 #level29 -> level30
 echo -n "Creating level 29... "
-useradd -m "bandit29-git" -k "/etc/bandit_skel" -s "/usr/bin/git-shell" -p `openssl passwd -1 -salt "bandit" "${passwords[29]}"`
+useradd -m "bandit29-git" -k "/etc/bandit_skel" -s "/usr/bin/git-shell" -p $(openssl passwd -1 -salt "bandit" "${passwords[29]}")
 
 sudo -u bandit29-git bash -c "git config --global user.name 'bandit' && git config --global user.email 'bandit@world.net' \
 && mkdir -p /home/bandit29-git/repo \
@@ -523,7 +524,7 @@ echo "done"
 #level30 -> level31
 echo -n "Creating level 30... "
 
-useradd -m "bandit30-git" -k "/etc/bandit_skel" -s "/usr/bin/git-shell" -p `openssl passwd -1 -salt "bandit" "${passwords[30]}"`
+useradd -m "bandit30-git" -k "/etc/bandit_skel" -s "/usr/bin/git-shell" -p $(openssl passwd -1 -salt "bandit" "${passwords[30]}")
 
 sudo -u bandit30-git bash -c "git config --global user.name 'bandit' && git config --global user.email 'bandit@world.net' \
 && mkdir -p /home/bandit30-git/repo \
@@ -548,7 +549,7 @@ echo "done"
 #level31 -> level32
 echo -n "Creating level 31... "
 
-useradd -m "bandit31-git" -k "/etc/bandit_skel" -s "/usr/bin/git-shell" -p `openssl passwd -1 -salt "bandit" "${passwords[31]}"`
+useradd -m "bandit31-git" -k "/etc/bandit_skel" -s "/usr/bin/git-shell" -p $(openssl passwd -1 -salt "bandit" "${passwords[31]}")
 
 sudo -u bandit31-git bash -c "git config --global user.name 'bandit' && git config --global user.email 'bandit@world.net' \
 && mkdir -p /home/bandit31-git/repo \

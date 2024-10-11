@@ -53,11 +53,11 @@ Enjoy !
 ### Todo
 - Level checked : 31
 - level 16b : hide another flag
-
-34->35
-36->37
+- level 5 : trop de fichiers en texte lisible
 
 - test the docker file
+-- add netcat, python
+
 
 new levels :
 - flag in env variable

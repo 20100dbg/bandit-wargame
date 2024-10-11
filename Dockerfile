@@ -33,7 +33,6 @@ COPY install.sh /install.sh
 COPY motd.txt /motd.txt
 
 # Avoid an error with the motd
-RUN echo> /etc/motd
 RUN echo> /etc/legal
 RUN chmod -x /etc/update-motd.d/*
 
