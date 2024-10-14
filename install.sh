@@ -43,8 +43,7 @@ create_motd() {
 	# $1 = user id
 	# $2 = goal
 	echo -e "$2" > "/etc/bandit_goal/bandit$1"
-	chgrp "bandit$1" "/etc/bandit_goal/bandit$1"
-	chmod 440 "/etc/bandit_goal/bandit$1"
+	chmod 444 "/etc/bandit_goal/bandit$1"
 
 	echo "alias goal='cat /etc/bandit_goal/bandit$1'" > "/home/bandit$1/.profile"
 
@@ -186,21 +185,21 @@ do
 
 	for j in $(seq 0 9)
 	do
-		if [[ $(( RANDOM % 8 )) -eq 0 ]]
-		then
-			size=1032
+		if [[ $(( RANDOM % 5 )) -eq 0 ]]
+		then 
+			size=1033
 		else
 			size=$(( RANDOM ))
 		fi
 
 		if [[ $(( RANDOM % 5 )) -eq 0 ]]
 		then
-			cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w $size | head -n 1 > "/home/bandit5/inhere/maybehere$i/file$j"
+			cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w "$((size-1))" | head -n 1 > "/home/bandit5/inhere/maybehere$i/file$j"
 		else
-			cat /dev/urandom | fold -w $size | head -n 1 > "/home/bandit5/inhere/maybehere$i/file$j"
+			$(python "$current_path/scripts/5_write_bin_file.py" "$size" "/home/bandit5/inhere/maybehere$i/file$j")
 		fi
 
-		if [[ $(( RANDOM % 3 )) -eq 0 ]]
+		if [[ $(( RANDOM % 4 )) -eq 0 ]]
 		then
 			chmod 640 "/home/bandit5/inhere/maybehere$i/file$j"
 		else
@@ -231,17 +230,17 @@ echo "done"
 
 #level7 -> level8
 echo -n "Creating level 7... "
-touch /home/bandit7/data.txt
 
-while IFS= read -r line; do
+cp "$current_path/data/7_wordlist.txt.gz" /home/bandit7/7_wordlist.txt.gz
+gzip -d /home/bandit7/7_wordlist.txt.gz
 
-	if [ "$line" = "millionth" ]
-	then
-		echo -e "millionth\t${passwords[8]}" >> /home/bandit7/data.txt
-	else
-		echo -e "$line\t$(gen_passwd)" >> /home/bandit7/data.txt
-	fi
-done < "$current_path/data/data7.txt"
+word="millionth"
+line=$(grep "$word" /home/bandit7/7_wordlist.txt)
+sed -i "s/$line/$word\t${passwords[8]}/" "/home/bandit7/7_wordlist.txt"
+
+mv /home/bandit7/7_wordlist.txt /home/bandit7/data.txt
+set_perms 7 /home/bandit7/data.txt 640
+
 echo "done"
 
 
@@ -314,14 +313,14 @@ echo "done"
 
 #level14 -> level15
 echo -n "Creating level 14... "
-cp "$current_path/scripts/script14.py" /etc/bandit_scripts/script14.py
+cp "$current_path/scripts/14_listener_tcp.py" /etc/bandit_scripts/script14.py
 echo "@reboot root python /etc/bandit_scripts/script14.py &> /dev/null" > /etc/cron.d/cronjob_bandit14
 echo "done"
 
 
 #level15 -> level16
 echo -n "Creating level 15... "
-cp "$current_path/scripts/script15.py" /etc/bandit_scripts/script15.py
+cp "$current_path/scripts/15_listener_ssl.py" /etc/bandit_scripts/script15.py
 echo "@reboot root python /etc/bandit_scripts/script15.py &> /dev/null" > /etc/cron.d/cronjob_bandit15
 openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout "/etc/bandit_scripts/script15.key" -out "/etc/bandit_scripts/script15.pem" -subj "/" 1>/dev/null 2>/dev/null
 echo "done"
@@ -334,7 +333,7 @@ ssh-keygen -q -f ./sshkey17.private -N "" 1>/dev/null 2>/dev/null
 mv ./sshkey17.private /etc/bandit_scripts/sshkey17.private
 mv ./sshkey17.private.pub /home/bandit17/.ssh/authorized_keys
 
-cp "$current_path/scripts/script16.py" /etc/bandit_scripts/script16.py
+cp "$current_path/scripts/16_multiple_listeners.py" /etc/bandit_scripts/script16.py
 echo "@reboot root python /etc/bandit_scripts/script16.py &> /dev/null" > /etc/cron.d/cronjob_bandit16
 
 openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout "/etc/bandit_scripts/script16.key" -out "/etc/bandit_scripts/script16.pem" -subj "/" 1>/dev/null 2>/dev/null
@@ -365,14 +364,14 @@ echo "done"
 
 #level19 -> level20
 echo -n "Creating level 19... "
-gcc "$current_path/scripts/script19.c" -o "/home/bandit19/bandit20-do"
+gcc "$current_path/scripts/19_suid.c" -o "/home/bandit19/bandit20-do"
 set_perms 19 "/home/bandit19/bandit20-do" 4750
 echo "done"
 
 
 #level20 -> level21
 echo -n "Creating level 20... "
-gcc "$current_path/scripts/script20.c" -o "/home/bandit20/suconnect"
+gcc "$current_path/scripts/20_tcp_connect.c" -o "/home/bandit20/suconnect"
 set_perms 20 "/home/bandit20/suconnect" 4750
 echo "done"
 
@@ -382,7 +381,7 @@ echo -n "Creating level 21... "
 echo "@reboot bandit22 /usr/bin/cronjob_bandit22.sh &> /dev/null" > /etc/cron.d/cronjob_bandit22
 echo "* * * * * bandit22 /usr/bin/cronjob_bandit22.sh &> /dev/null" >> /etc/cron.d/cronjob_bandit22
 
-sed "s/__PLACEHOLDER__/$(gen_passwd)/" "$current_path/scripts/script22.sh" > "/usr/bin/cronjob_bandit22.sh"
+sed "s/__PLACEHOLDER__/$(gen_passwd)/" "$current_path/scripts/22_tmp_file.sh" > "/usr/bin/cronjob_bandit22.sh"
 
 set_perms 21 "/usr/bin/cronjob_bandit22.sh" 750
 echo "done"
@@ -393,7 +392,7 @@ echo -n "Creating level 22... "
 echo "@reboot bandit23 /usr/bin/cronjob_bandit23.sh &> /dev/null" > /etc/cron.d/cronjob_bandit23
 echo "* * * * * bandit23 /usr/bin/cronjob_bandit23.sh &> /dev/null" >> /etc/cron.d/cronjob_bandit23
 
-cp "$current_path/scripts/script23.sh" "/usr/bin/cronjob_bandit23.sh"
+cp "$current_path/scripts/23_tmp_file2.sh" "/usr/bin/cronjob_bandit23.sh"
 set_perms 22 "/usr/bin/cronjob_bandit23.sh" 750
 echo "done"
 
@@ -407,7 +406,7 @@ echo "* * * * * bandit24 /usr/bin/cronjob_bandit24.sh &> /dev/null" >> /etc/cron
 mkdir -p "/var/spool/bandit24/foo"
 chmod 777 "/var/spool/bandit24/foo"
 
-cp "$current_path/scripts/script24.sh" "/usr/bin/cronjob_bandit24.sh"
+cp "$current_path/scripts/24_script_launcher.sh" "/usr/bin/cronjob_bandit24.sh"
 set_perms 23 "/usr/bin/cronjob_bandit24.sh" 750
 echo "done"
 
@@ -415,9 +414,10 @@ echo "done"
 #level24 -> level25
 echo -n "Creating level 24... "
 
-echo $((RANDOM%10000)) > /etc/bandit_pass/bandit25pin
+echo $((RANDOM%10000)) > "/etc/bandit_pass/bandit25pin"
+set_perms 25 "/etc/bandit_pass/bandit25pin" 400
 
-cp "$current_path/scripts/script25.py" /etc/bandit_scripts/script25.py
+cp "$current_path/scripts/25_listener_pin.py" /etc/bandit_scripts/script25.py
 echo "@reboot root python /etc/bandit_scripts/script25.py &> /dev/null" > /etc/cron.d/cronjob_bandit25
 
 echo "done"
@@ -444,7 +444,7 @@ echo "done"
 
 #level26 -> level27
 echo -n "Creating level 26... "
-gcc "$current_path/scripts/script19.c" -o "/home/bandit26/bandit27-do"
+gcc "$current_path/scripts/19_suid.c" -o "/home/bandit26/bandit27-do"
 set_perms 26 "/home/bandit26/bandit27-do" 4750
 
 echo "done"
@@ -542,8 +542,8 @@ sudo -u bandit30-git bash -c "cd /home/bandit30-git/repo \
 && rm .git/refs/tags/secret \
 && rm hash"
 
-
 echo "done"
+
 
 
 #level31 -> level32
@@ -564,7 +564,7 @@ sudo -u bandit31-git bash -c "git config --global user.name 'bandit' && git conf
 && cd repo.git \
 && git config --bool core.bare true"
 
-sed "s/__PLACEHOLDER__/${passwords[32]}/" "$current_path/scripts/script31" > "/home/bandit31-git/repo.git/hooks/pre-receive"
+sed "s/__PLACEHOLDER__/${passwords[32]}/" "$current_path/scripts/31_git_hook" > "/home/bandit31-git/repo.git/hooks/pre-receive"
 chown bandit31-git "/home/bandit31-git/repo.git/hooks/pre-receive"
 chgrp bandit31-git "/home/bandit31-git/repo.git/hooks/pre-receive"
 chmod +x /home/bandit31-git/repo.git/hooks/pre-receive
@@ -575,7 +575,9 @@ echo "done"
 #level32 -> level33
 #shell jail
 echo -n "Creating level 32... "
-gcc "$current_path/scripts/script32.c" -o "/home/bandit32/uppershell"
+echo "${passwords[33]}" >> /home/bandit32/readme
+
+gcc "$current_path/scripts/32_uppershell.c" -o "/home/bandit32/uppershell"
 set_perms 32 "/home/bandit32/uppershell" 4750
 usermod -s /home/bandit32/uppershell bandit32
 echo "done"
@@ -584,6 +586,7 @@ echo "done"
 #level33 -> level34
 echo -n "Creating level 33... "
 echo "export bandit34=${passwords[34]}" >> /home/bandit33/.profile
+echo "head -n 4 /home/bandit33/.profile" >> /home/bandit33/.profile
 echo "done"
 
 
@@ -598,7 +601,7 @@ echo ${passwords[35]} > "/usr/local/share/man/$rnd_file"
 echo "@reboot bandit35 /usr/bin/cronjob_bandit35.sh &> /dev/null" > /etc/cron.d/cronjob_bandit35
 echo "* * * * * bandit35 /usr/bin/cronjob_bandit35.sh &> /dev/null" >> /etc/cron.d/cronjob_bandit35
 
-sed "s/__PLACEHOLDER__/$rnd_file/" "$current_path/scripts/script35.sh" > "/usr/bin/cronjob_bandit35.sh"
+sed "s/__PLACEHOLDER__/$rnd_file/" "$current_path/scripts/35_cron_touch.sh" > "/usr/bin/cronjob_bandit35.sh"
 
 
 chown bandit35 "/usr/bin/cronjob_bandit35.sh"
@@ -642,7 +645,7 @@ echo ${passwords[39]} > "/mnt/bandit38/readme"
 set_perms 38 "/mnt/bandit38/readme" 640
 
 echo '/mnt/bandit38 *(ro,subtree_check,all_squash)' >> /etc/exports
-service nfs-kernel-server restart
+#service nfs-kernel-server restart
 #exportfs -a
 
 echo "done"
@@ -662,6 +665,6 @@ echo 'Thanks for playing !' > '/home/bandit40/readme'
 echo "done"
 
 
-/etc/init.d/cron reload
 echo;
-echo "All done, enjoy !"
+echo "If you are starting this script manually (not with docker), you need to reboot to activate cronjobs !"
+echo "Enjoy !"

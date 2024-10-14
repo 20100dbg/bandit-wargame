@@ -51,20 +51,15 @@ Enjoy !
 
 
 ### Todo
-- Level checked : 31
+- Level checked : 24
 - level 16b : hide another flag
-- level 5 : trop de fichiers en texte lisible
 
 - test the docker file
--- add netcat, python
+- verfier que showmount est dans le path
+- les listener nécessite une connexion à chaque tentative
 
 
 new levels :
-- flag in env variable
-- find recently edited file (don't forget a script that update the file frequently)
-- suid on bin like find, cat, base64, cp 
-- mount nfs
-- jail python
 - find a process XXX -> readable .sh ? listening port as parameter ?
 - find a service -> flag in .service file ? in .sh file ?
 
