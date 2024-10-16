@@ -13,7 +13,8 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     while True:
         try:
             conn, addr = s.accept()
-            with conn:
+            
+            while True:
                 data = conn.recv(1024).decode().strip()
 
                 print(data,password14)

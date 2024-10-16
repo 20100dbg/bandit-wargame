@@ -247,7 +247,6 @@ echo "done"
 #level8 -> level9
 echo -n "Creating level 8... "
 touch /home/bandit8/data_tmp.txt
-x=$(( RANDOM % 1000))
 
 for i in {1..100}; do
 	
@@ -350,7 +349,7 @@ for i in {1..100}; do
 	gen_passwd >> "/home/bandit17/passwords.old"
 done
 
-rnd_line=$(sed -n -e $((RANDOM % 100))p /home/bandit17/passwords.old)
+rnd_line=$(sed -n -e $((RANDOM % 100 +1))p /home/bandit17/passwords.old)
 sed "s/$rnd_line/${passwords[18]}/" "/home/bandit17/passwords.old" > "/home/bandit17/passwords.new"
 echo "done"
 
@@ -414,7 +413,8 @@ echo "done"
 #level24 -> level25
 echo -n "Creating level 24... "
 
-echo $((RANDOM%10000)) > "/etc/bandit_pass/bandit25pin"
+pin=$(seq -w 0 9999 | shuf | head -n 1)
+echo "$pin" > "/etc/bandit_pass/bandit25pin"
 set_perms 25 "/etc/bandit_pass/bandit25pin" 400
 
 cp "$current_path/scripts/25_listener_pin.py" /etc/bandit_scripts/script25.py
@@ -555,7 +555,7 @@ sudo -u bandit31-git bash -c "git config --global user.name 'bandit' && git conf
 && mkdir -p /home/bandit31-git/repo \
 && cd /home/bandit31-git/repo \
 && git init -q \
-&& echo 'Just an empty file ahahah' > readme \
+&& echo \"This time you'll need to commit and push a file name key.txt that contains 'Can I come in?'\" > readme \
 && git add . \
 && git commit -m 'initial commit' -q \
 && mv .git ../repo.git \
@@ -586,7 +586,11 @@ echo "done"
 #level33 -> level34
 echo -n "Creating level 33... "
 echo "export bandit34=${passwords[34]}" >> /home/bandit33/.profile
-echo "head -n 4 /home/bandit33/.profile" >> /home/bandit33/.profile
+echo "head -n 4 /home/bandit33/.profile > /home/bandit33/profile2" >> /home/bandit33/.profile
+echo "mv /home/bandit33/profile2 /home/bandit33/.profile" >> /home/bandit33/.profile
+chown bandit33 /home/bandit33/.profile
+chgrp bandit33 /home/bandit33/.profile
+chmod 744 /home/bandit33/.profile
 echo "done"
 
 
@@ -645,7 +649,7 @@ echo ${passwords[39]} > "/mnt/bandit38/readme"
 set_perms 38 "/mnt/bandit38/readme" 640
 
 echo '/mnt/bandit38 *(ro,subtree_check,all_squash)' >> /etc/exports
-#service nfs-kernel-server restart
+service nfs-kernel-server restart
 #exportfs -a
 
 echo "done"

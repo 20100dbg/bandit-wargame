@@ -12,7 +12,8 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     while True:
         try:
             conn, addr = s.accept()
-            with conn:
+            
+            while True:
                 data = conn.recv(1024).decode().strip().split()
 
                 if data[0] == password24 and data[1] == pin:
@@ -21,4 +22,5 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
                 else:
                     conn.send(b'Wrong password !\n')
         except Exception as e:
+
             print('Exception', e)

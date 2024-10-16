@@ -10,7 +10,8 @@ def start_server(port):
 
         while True:
             conn, addr = s.accept()
-            with conn:
+            
+            while True:
                 conn.send(conn.recv(1024))
 
 
@@ -54,7 +55,7 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     while True:
         try:
             conn, addr = ss.accept()
-            with conn:
+            while True:
                 data = conn.recv(1024).decode().strip()
 
                 if data == password16:

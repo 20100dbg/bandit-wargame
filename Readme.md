@@ -37,7 +37,7 @@ ssh bandit0@localhost -p 2220
 
 We may need some softwares :
 ```
-sudo apt install xxd git bzip2 gcc nfs-kernel-server
+sudo apt install xxd git bzip2 gcc nfs-common nfs-kernel-server netcat-traditionnal nmap
 ```
 
 Start installer as root
@@ -51,23 +51,15 @@ Enjoy !
 
 
 ### Todo
-- Level checked : 24
+- Level checked : 37
 - level 16b : hide another flag
-
 - test the docker file
 - verfier que showmount est dans le path
-- les listener nécessite une connexion à chaque tentative
 
 
 new levels :
 - find a process XXX -> readable .sh ? listening port as parameter ?
 - find a service -> flag in .service file ? in .sh file ?
-
-- exploit PATH injection
-- config sudo
-- capabilities
-- Wildcard Injection
-- unquoted string in bash script
 
 
 ### Contributors

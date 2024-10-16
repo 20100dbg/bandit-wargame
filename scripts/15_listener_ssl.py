@@ -28,7 +28,8 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     while True:
         try:
             conn, addr = ss.accept()
-            with conn:
+            
+            while True:
                 data = conn.recv(1024).decode().strip()
 
                 if data == password15:
