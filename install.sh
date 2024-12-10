@@ -100,9 +100,14 @@ goals+=( "The password for the next level is stored in your home folder, but the
 #level 40
 
 
+current_path=$(pwd)
+tmp_path=$(mktemp -d)
+cd $tmp_path
+
+
 touch /etc/motd
 mv /etc/motd /etc/motd.bak
-cat motd.txt >/etc/motd
+cat "$current_path/data/motd.txt" >/etc/motd
 
 mkdir /etc/bandit_scripts
 mkdir /etc/bandit_pass
@@ -110,9 +115,6 @@ mkdir /etc/bandit_goal
 mkdir /etc/bandit_skel
 
 
-current_path=$(pwd)
-tmp_path=$(mktemp -d)
-cd $tmp_path
 
 passwords=()
 
@@ -640,32 +642,31 @@ echo "done"
 
 
 #level38 -> level39
+#echo -n "Creating level 38... "
+
+#mkdir -p /mnt/bandit38
+#set_perms 38 "/mnt/bandit38" 750
+
+#echo ${passwords[39]} > "/mnt/bandit38/readme"
+#set_perms 38 "/mnt/bandit38/readme" 640
+
+#echo '/mnt/bandit38 *(ro,subtree_check,all_squash)' >> /etc/exports
+#service nfs-kernel-server restart
+
+#echo "done"
+
+
+#level38 -> level39
 echo -n "Creating level 38... "
-
-mkdir -p /mnt/bandit38
-set_perms 38 "/mnt/bandit38" 750
-
-echo ${passwords[39]} > "/mnt/bandit38/readme"
-set_perms 38 "/mnt/bandit38/readme" 640
-
-echo '/mnt/bandit38 *(ro,subtree_check,all_squash)' >> /etc/exports
-service nfs-kernel-server restart
-#exportfs -a
-
+echo ${passwords[40]} > "/home/bandit38/readme"
+set_perms 37 "/home/bandit38/readme" 640
+usermod -s /usr/bin/python bandit38
 echo "done"
 
 
-#level39 -> level40
+#level39
 echo -n "Creating level 39... "
-echo ${passwords[40]} > "/home/bandit39/readme"
-set_perms 37 "/home/bandit39/readme" 640
-usermod -s /usr/bin/python bandit39
-echo "done"
-
-
-#level40
-echo -n "Creating level 40... "
-echo 'Thanks for playing !' > '/home/bandit40/readme'
+echo 'Thanks for playing !' > '/home/bandit39/readme'
 echo "done"
 
 

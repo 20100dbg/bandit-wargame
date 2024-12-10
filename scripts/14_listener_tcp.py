@@ -17,8 +17,6 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
             while True:
                 data = conn.recv(1024).decode().strip()
 
-                print(data,password14)
-
                 if data == password14:
                     conn.send(b'Correct !\n')
                     conn.send(password15.encode() + b'\n')

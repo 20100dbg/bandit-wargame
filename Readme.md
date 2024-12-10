@@ -1,49 +1,64 @@
+### Introduction
+
+This is an offline adaptation of the [https://overthewire.org/wargames/bandit/](overthewire's wargame bandit).
+Bandit is great to test your Linux skills
+
+
+Passwords are randomly generated at each install.
+
+
 ### Install instructions
 
-You can install bandit@home with docker or manually. If you chose the manual version, we recommend to install it in a virtual machine.
+You can install bandit@home with docker (recommended) or manually. If you chose to install this manually, you should do so in a in a virtual machine, as it creates many users, cronjobs, and other things.
 
-Before anything, clone this repository (you can also zip download it)
+
+Start with cloning this repository
 
 ```
 git clone https://github.com/20100dbg/bandit-wargame
 ```
 
 
-### Run it in a docker container
+### Docker install
 
 Build the container
-
 ```
 docker build . -t bandit
 ```
 
 Start the container
-
 ```
 docker run -d --name bandit -p 2220:22 bandit:latest
 ```
 
-This will start a ssh server listening on port 2220.
-
 Connect as user `bandit0`, password `bandit0` with:
-
 ```
 ssh bandit0@localhost -p 2220
 ```
 
 
-### Install instructions
+### Manual install
 
+Again, we recommend to install this in a Virtual machine, NOT in your daily environment.
 
-We may need some softwares :
+First, we may need some additional softwares :
 ```
-sudo apt install xxd git bzip2 gcc nfs-common nfs-kernel-server netcat-traditionnal nmap
+sudo apt install xxd git bzip2 gcc netcat-traditionnal nmap
 ```
 
 Start installer as root
-
 ```
 sudo ./install.sh
+```
+
+At this point you should reboot in order to enable some cronjobs.
+```
+sudo reboot
+```
+
+Then, connect as user `bandit0`, password `bandit0` with:
+```
+ssh bandit0@127.0.0.1
 ```
 
 Enjoy !
@@ -51,17 +66,11 @@ Enjoy !
 
 
 ### Todo
-- Level checked : 37
-- level 16b : hide another flag
-- test the docker file
-- verfier que showmount est dans le path
+- retester 16, et à partir de 24
+- add a level related to NFS ?
 
-
-new levels :
-- find a process XXX -> readable .sh ? listening port as parameter ?
-- find a service -> flag in .service file ? in .sh file ?
 
 
 ### Contributors
-[https://github.com/kylir](Kylir)
+Thanks to [https://github.com/kylir](Kylir) for writing the initial Dockerfile
 

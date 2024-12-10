@@ -6,7 +6,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 # Update package lists and install OpenSSH server
 RUN apt-get update && \
-    apt-get install -y openssh-server python3 bzip2 cron xxd gcc git nfs-common nfs-kernel-server netcat-traditionnal nmap && \
+    apt-get install -y nano vim file sudo openssh-server python3 bzip2 cron xxd gcc git netcat-openbsd nmap && \
     apt-get clean
 
 # Alias python to python3
@@ -30,9 +30,7 @@ EXPOSE 22
 COPY data /data
 COPY scripts /scripts
 COPY install.sh /install.sh
-COPY motd.txt /motd.txt
 
-# Avoid an error with the motd
 RUN echo> /etc/legal
 RUN chmod -x /etc/update-motd.d/*
 
@@ -43,5 +41,12 @@ RUN chmod +x /install.sh
 # Install the levels
 RUN ./install.sh
 
-# Start the SSH service
-CMD ["/usr/sbin/sshd", "-D"]
+# Clean
+RUN rm -rf /data
+RUN rm -rf /scripts
+RUN rm /install.sh
+
+# Start the background scripts & SSH service
+COPY starter.sh starter.sh
+RUN chmod 0700 /starter.sh
+CMD ["/starter.sh"]
