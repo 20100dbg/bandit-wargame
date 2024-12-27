@@ -1,25 +1,22 @@
 ### Introduction
 
-This is an offline adaptation of the [https://overthewire.org/wargames/bandit/](overthewire's wargame bandit).
-Bandit is great to test your Linux skills
+This is an offline remake of the [Overthewire's wargame Bandit](https://overthewire.org/wargames/bandit/).
+In this remake you will find the 33 original levels, and 5 additionnal levels I added.
+
+Bandit is great to test your Linux skills and have a nice security related touch.
 
 
-Passwords are randomly generated at each install.
-
-
-### Install instructions
+## Install instructions
 
 You can install bandit@home with docker (recommended) or manually. If you chose to install this manually, you should do so in a in a virtual machine, as it creates many users, cronjobs, and other things.
+Note : Passwords are randomly generated at each install.
 
 
+## Docker install
 Start with cloning this repository
-
 ```
 git clone https://github.com/20100dbg/bandit-wargame
 ```
-
-
-### Docker install
 
 Build the container
 ```
@@ -37,11 +34,16 @@ ssh bandit0@localhost -p 2220
 ```
 
 
-### Manual install
+## Manual install
 
 Again, we recommend to install this in a Virtual machine, NOT in your daily environment.
 
-First, we may need some additional softwares :
+Start with cloning this repository
+```
+git clone https://github.com/20100dbg/bandit-wargame
+```
+
+We may need some additional softwares :
 ```
 sudo apt install xxd git bzip2 gcc netcat-traditionnal nmap
 ```
@@ -66,9 +68,7 @@ Enjoy !
 
 
 ### Todo
-- retester 16, et à partir de 24
-- add a level related to NFS ?
-
+- Add a level related to NFS
 
 
 ### Contributors
