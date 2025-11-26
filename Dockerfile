@@ -4,6 +4,7 @@ FROM ubuntu:24.04
 # Set environment variables to make the installation non-interactive
 ENV DEBIAN_FRONTEND=noninteractive
 
+
 # Update package lists and install OpenSSH server
 RUN apt-get update && \
     apt-get install -y nano vim file sudo openssh-server python3 bzip2 cron xxd gcc git netcat-openbsd nmap && \
@@ -32,19 +33,14 @@ COPY scripts /scripts
 COPY install.sh /install.sh
 
 RUN echo> /etc/legal
-RUN chmod -x /etc/update-motd.d/*
 
-
-# Make sure the install.sh script is executable
-RUN chmod +x /install.sh
+RUN chmod -x /etc/update-motd.d/* && chmod o-r /tmp && chmod +x /install.sh
 
 # Install the levels
 RUN ./install.sh
 
 # Clean
-RUN rm -rf /data
-RUN rm -rf /scripts
-RUN rm /install.sh
+RUN rm -rf /data && rm -rf /scripts && rm /install.sh
 
 # Start the background scripts & SSH service
 COPY starter.sh starter.sh

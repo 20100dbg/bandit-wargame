@@ -12,6 +12,7 @@ int main (int argc, char **argv)
 	setreuid(geteuid(), getuid());
 	
 	char *cmd = calloc(BUFFERSIZE, BUFFERSIZE), buffer[BUFFERSIZE];
+	puts("__PLACEHOLDER__\n\n");
 	puts("WELCOME TO THE UPPERCASE SHELL");
 	
 	while (1)

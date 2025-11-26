@@ -80,11 +80,11 @@ goals+=( "There is a setuid binary in the homedirectory that does the following:
 goals+=( "A program is running automatically at regular intervals from cron, the time-based job scheduler. Look in /etc/cron.d/ for the configuration and see what command is being executed." )
 goals+=( "A program is running automatically at regular intervals from cron, the time-based job scheduler. Look in /etc/cron.d/ for the configuration and see what command is being executed.\n\nNOTE: Looking at shell scripts written by other people is a very useful skill. The script for this level is intentionally made easy to read. If you are having problems understanding what it does, try executing it to see the debug information it prints." )
 goals+=( "A program is running automatically at regular intervals from cron, the time-based job scheduler. Look in /etc/cron.d/ for the configuration and see what command is being executed.\n\nNOTE: This level requires you to create your own first shell-script. This is a very big step and you should be proud of yourself when you beat this level!\n\nNOTE 2: Keep in mind that your shell script is removed once executed, so you may want to keep a copy around…" )
-goals+=( "A daemon is listening on port 30002 and will give you the password for bandit25 if given the password for bandit24 and a secret numeric 4-digit pincode. There is no way to retrieve the pincode except by going through all of the 10000 combinations, called brute-forcing.\nYou do not need to create new connections each time" )
+goals+=( "A daemon is listening on port 30002 and will give you the password for bandit25 if given the password for bandit24 and a secret numeric 4-digit pincode (on a single line, password, a space, and 4 digit pin). There is no way to retrieve the pincode except by going through all of the 10000 combinations, called brute-forcing.\nYou do not need to create new connections each time" )
 goals+=( "Logging in to bandit26 from bandit25 should be fairly easy… The shell for user bandit26 is not /bin/bash, but something else. Find out what it is, how it works and how to break out of it.\n\nNOTE: if you’re a Windows user and typically use Powershell to ssh into bandit: Powershell is known to cause issues with the intended solution to this level. You should use command prompt instead." )
 goals+=( "Good job getting a shell! Now hurry and grab the password for bandit27!" )
 goals+=( "There is a git repository at ssh://bandit27-git@localhost/home/bandit27-git/repo via the port 2220. The password for the user bandit27-git is the same as for the user bandit27.\n\nClone the repository and find the password for the next level." )
-goals+=( "There is a git repository at ssh://bandit28-git@localhost/home/bandit28-git/repo via the port 2220. The password for the user bandit27-git is the same as for the user bandit27.\n\nClone the repository and find the password for the next level." )
+goals+=( "There is a git repository at ssh://bandit28-git@localhost/home/bandit28-git/repo via the port 2220. The password for the user bandit28-git is the same as for the user bandit28.\n\nClone the repository and find the password for the next level." )
 goals+=( "There is a git repository at ssh://bandit29-git@localhost/home/bandit29-git/repo via the port 2220. The password for the user bandit29-git is the same as for the user bandit29.\n\nClone the repository and find the password for the next level." )
 #level 30
 goals+=( "There is a git repository at ssh://bandit30-git@localhost/home/bandit30-git/repo via the port 2220. The password for the user bandit30-git is the same as for the user bandit30.\n\nClone the repository and find the password for the next level." )
@@ -95,8 +95,8 @@ goals+=( "The password for the next level is stored in a recently modified file"
 goals+=( "Get the password for the next level using a SUID file" )
 goals+=( "Get the password for the next level using a SUID file" )
 goals+=( "Get the password for the next level using a SUID file" )
-goals+=( "The password for the next level is stored in a NFS share" )
-goals+=( "The password for the next level is stored in your home folder, but the shell has been changed" )
+goals+=( "Yet another shell" )
+goals+=( "Thanks for playing !" )
 #level 40
 
 
@@ -163,17 +163,25 @@ echo "done"
 #level4 -> level5
 echo -n "Creating level 4... "
 mkdir /home/bandit4/inhere
-x=$(( RANDOM % 10))
+x=$(( RANDOM % 50))
 
-for i in {0..9}; do
-	if [[ $i -eq $x ]]
-	then
-		echo ${passwords[5]} > "/home/bandit4/inhere/-file0$i"
-	else
-	    cat /dev/urandom | fold -w 32 | head -n 1 > "/home/bandit4/inhere/-file0$i"
-	fi
-	set_perms 4 "/home/bandit4/inhere/-file0$i" 640
+for i in {0..50}; do
+
+    if [ "$i" -lt 10 ]; then i="0$i"; fi
+    if [ "$x" -lt 10 ]; then x="0$x"; fi
+    check_type=0
+
+    while [ $check_type -eq "0" ]
+	do
+	    cat /dev/urandom | head -c 32 > "/home/bandit4/inhere/-file$i"
+        type=$(file "/home/bandit4/inhere/-file$i" | cut -d ' ' -f 2)
+	    if [ "$type" = "data" ]; then check_type=1; fi
+	done
+
+	set_perms 4 "/home/bandit4/inhere/-file$i" 640
 done
+
+echo ${passwords[5]} > "/home/bandit4/inhere/-file$x"
 echo "done"
 
 
@@ -196,9 +204,9 @@ do
 
 		if [[ $(( RANDOM % 5 )) -eq 0 ]]
 		then
-			cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w "$((size-1))" | head -n 1 > "/home/bandit5/inhere/maybehere$i/file$j"
+			cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w "$size" | head -n 1 > "/home/bandit5/inhere/maybehere$i/file$j"
 		else
-			$(python "$current_path/scripts/5_write_bin_file.py" "$size" "/home/bandit5/inhere/maybehere$i/file$j")
+			cat /dev/urandom | head -c "$size" > "/home/bandit5/inhere/maybehere$i/file$j"
 		fi
 
 		if [[ $(( RANDOM % 4 )) -eq 0 ]]
@@ -270,7 +278,7 @@ echo "done"
 #level9 -> level10
 echo -n "Creating level 9... "
 cat /dev/urandom | fold -w $(( RANDOM % 9000 )) | head -n 1 > /home/bandit9/data.txt
-echo -n "$before====== ${passwords[10]}     $after" >> /home/bandit9/data.txt
+echo -n "$before======== ${passwords[10]}     $after" >> /home/bandit9/data.txt
 cat /dev/urandom | fold -w $(( RANDOM % 9000 )) | head -n 1 >> /home/bandit9/data.txt
 echo "done"
 
@@ -359,6 +367,7 @@ echo "done"
 #level18 -> level19
 echo -n "Creating level 18... "
 echo ${passwords[19]} > "/home/bandit18/readme"
+echo 'echo "Byebye!"' >> "/home/bandit18/.profile"
 echo 'exit 0' >> "/home/bandit18/.profile"
 echo "done"
 
@@ -433,11 +442,13 @@ mv ./bandit26.sshkey /home/bandit25/
 set_perms 25 "/home/bandit25/bandit26.sshkey" 640
 mv ./bandit26.sshkey.pub /home/bandit26/.ssh/authorized_keys
 
+cp /home/bandit26/.profile /home/bandit26/.bashrc
+
 touch /usr/bin/showtext
 echo '#!/bin/sh' >> /usr/bin/showtext
-echo 'export TERM=linux' >> /usr/bin/showtext
-echo 'exec more /etc/motd' >> /usr/bin/showtext
-echo 'exit 0' >> /usr/bin/showtext
+echo 'export ENV=~/.profile' >> /usr/bin/showtext
+echo 'SHELL=/bin/sh' >> /usr/bin/showtext
+echo 'more /etc/motd' >> /usr/bin/showtext
 
 chmod +x "/usr/bin/showtext"
 usermod -s /usr/bin/showtext bandit26
@@ -579,7 +590,9 @@ echo "done"
 echo -n "Creating level 32... "
 echo "${passwords[33]}" >> /home/bandit32/readme
 
-gcc "$current_path/scripts/32_uppershell.c" -o "/home/bandit32/uppershell"
+sed "s/__PLACEHOLDER__/${goals[32]}/" "$current_path/scripts/32_uppershell.c" > "$current_path/scripts/tmp_uppershell.c"
+
+gcc "$current_path/scripts/tmp_uppershell.c" -o "/home/bandit32/uppershell"
 set_perms 32 "/home/bandit32/uppershell" 4750
 usermod -s /home/bandit32/uppershell bandit32
 echo "done"
@@ -642,23 +655,8 @@ echo "done"
 
 
 #level38 -> level39
-#echo -n "Creating level 38... "
-
-#mkdir -p /mnt/bandit38
-#set_perms 38 "/mnt/bandit38" 750
-
-#echo ${passwords[39]} > "/mnt/bandit38/readme"
-#set_perms 38 "/mnt/bandit38/readme" 640
-
-#echo '/mnt/bandit38 *(ro,subtree_check,all_squash)' >> /etc/exports
-#service nfs-kernel-server restart
-
-#echo "done"
-
-
-#level38 -> level39
 echo -n "Creating level 38... "
-echo ${passwords[40]} > "/home/bandit38/readme"
+echo ${passwords[39]} > "/home/bandit38/readme"
 set_perms 37 "/home/bandit38/readme" 640
 usermod -s /usr/bin/python bandit38
 echo "done"
@@ -666,7 +664,7 @@ echo "done"
 
 #level39
 echo -n "Creating level 39... "
-echo 'Thanks for playing !' > '/home/bandit39/readme'
+#echo 'Thanks for playing !' > '/home/bandit39/readme'
 echo "done"
 
 

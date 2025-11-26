@@ -4,15 +4,16 @@ myname=$(whoami)
 
 cd /var/spool/$myname/foo
 echo "Executing and deleting all scripts in /var/spool/$myname/foo:"
-for i in * .*;
+
+for f in ./*
 do
-    if [ "$i" != "." -a "$i" != ".." ];
+    if [ "$f" != "." -a "$f" != ".." ];
     then
-        echo "Handling $i"
-        owner="$(stat --format "%U" ./$i)"
+        echo "Handling $f"
+        owner="$(stat --format "%U" $f)"
         if [ "${owner}" = "bandit23" ]; then
-            timeout -s 9 60 ./$i
+            timeout -s 9 60 $f
         fi
-        rm -f ./$i
+        rm -f $f
     fi
 done

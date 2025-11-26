@@ -4,7 +4,7 @@
 #include <arpa/inet.h>
 #include <string.h>
 
-#define BUFFER_SIZE 33
+#define BUFFER_SIZE 34
 
 
 int main (int argc, char **argv)
@@ -15,10 +15,9 @@ int main (int argc, char **argv)
         return 1;
     }
 
-    char next_password[BUFFER_SIZE+1];
+    char next_password[BUFFER_SIZE];
     FILE* filefd = fopen("/etc/bandit_pass/bandit21", "r");
     fgets(next_password, BUFFER_SIZE, filefd);
-    next_password[BUFFER_SIZE-1] = '\n';
     next_password[BUFFER_SIZE] = '\0';
     fclose(filefd);
 
@@ -27,6 +26,7 @@ int main (int argc, char **argv)
     char current_password[BUFFER_SIZE];
     filefd = fopen("/etc/bandit_pass/bandit20", "r");
     fgets(current_password, BUFFER_SIZE, filefd);
+    current_password[BUFFER_SIZE] = '\0';
     fclose(filefd);
 
     //Create socket and ip+port struct
@@ -41,13 +41,13 @@ int main (int argc, char **argv)
     char buffer[BUFFER_SIZE];
     bzero(buffer,BUFFER_SIZE);
 
-    int n = read(sockfd, buffer, BUFFER_SIZE-1);
+    int n = read(sockfd, buffer, BUFFER_SIZE);
 
     printf("Read: %s\n", buffer);
 
     if (strcmp(buffer, current_password) == 0) {
         printf("Password matches, sending next password\n");
-        write(sockfd, next_password, strlen(next_password));
+        write(sockfd, next_password, BUFFER_SIZE);
 
     } else {
         printf("ERROR: This doesn't match the current password!\n");
@@ -55,5 +55,5 @@ int main (int argc, char **argv)
     }
 
     close(sockfd);
-    return 0;   
+    return 0;
 }
