@@ -95,7 +95,7 @@ goals+=( "The password for the next level is stored in a recently modified file"
 goals+=( "Get the password for the next level using a SUID file" )
 goals+=( "Get the password for the next level using a SUID file" )
 goals+=( "Get the password for the next level using a SUID file" )
-goals+=( "Yet another shell" )
+goals+=( "Yet another shell to escape !" )
 goals+=( "Thanks for playing !" )
 #level 40
 
@@ -601,8 +601,6 @@ echo "done"
 #level33 -> level34
 echo -n "Creating level 33... "
 echo "export bandit34=${passwords[34]}" >> /home/bandit33/.profile
-echo "head -n 4 /home/bandit33/.profile > /home/bandit33/profile2" >> /home/bandit33/.profile
-echo "mv /home/bandit33/profile2 /home/bandit33/.profile" >> /home/bandit33/.profile
 chown bandit33 /home/bandit33/.profile
 chgrp bandit33 /home/bandit33/.profile
 chmod 744 /home/bandit33/.profile
@@ -656,9 +654,12 @@ echo "done"
 
 #level38 -> level39
 echo -n "Creating level 38... "
+echo -e "#!/bin/bash\ncat /etc/bandit_goal/bandit38\n/usr/bin/python" > /home/bandit38/launcher.sh
+set_perms 37 "/home/bandit38/launcher.sh" 740
+
 echo ${passwords[39]} > "/home/bandit38/readme"
 set_perms 37 "/home/bandit38/readme" 640
-usermod -s /usr/bin/python bandit38
+usermod -s /home/bandit38/launcher.sh bandit38
 echo "done"
 
 

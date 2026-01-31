@@ -1,3 +1,3 @@
 #!/bin/bash
 
-touch "/usr/local/share/man/__PLACEHOLDER__"
+touch -m /usr/local/share/man/__PLACEHOLDER__
